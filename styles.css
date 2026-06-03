@@ -122,7 +122,7 @@ em { font-style: italic; }
   padding-bottom: 26px;
 }
 .wordmark { display: flex; align-items: center; gap: 11px; }
-.wordmark-mark { color: var(--beige); display: flex; }
+.wordmark-mark { color: var(--paper); display: flex; }
 .wordmark-text {
   font-family: var(--serif);
   font-size: 25px;
@@ -374,6 +374,170 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   letter-spacing: 0.04em;
   color: var(--faint);
 }
+
+/* ════════════════════════════ DEMO ════════════════════════ */
+.demo { padding-top: clamp(72px, 11vw, 130px); padding-bottom: clamp(72px, 11vw, 130px); }
+
+.stage {
+  position: relative;
+  height: 400px;
+  margin-top: 8px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 75% at 50% -12%, rgba(201,184,150,0.12), transparent 52%),
+    linear-gradient(180deg, #121215, #0a0a0b);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 50px 90px -50px rgba(0,0,0,0.9);
+}
+@media (max-width: 560px) { .stage { height: 360px; } }
+
+/* faux macOS menu bar for context */
+.menubar {
+  position: absolute; top: 0; left: 0; right: 0; height: 27px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 15px;
+  font-family: var(--sans); font-size: 11.5px; font-weight: 500;
+  color: rgba(243,239,230,0.42);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  z-index: 1;
+}
+.mb-group { display: flex; align-items: center; gap: 15px; }
+.mb-strong { color: rgba(243,239,230,0.72); font-weight: 600; }
+.mb-logo { width: 11px; height: 13px; background: rgba(243,239,230,0.6);
+  -webkit-mask: radial-gradient(circle at 50% 42%, #000 42%, transparent 43%);
+  border-radius: 2px 2px 3px 3px; }
+.mb-batt { width: 18px; height: 10px; border: 1px solid rgba(243,239,230,0.42);
+  border-radius: 2px; position: relative; }
+.mb-batt::before { content: ""; position: absolute; inset: 1.5px; right: 5px;
+  background: rgba(243,239,230,0.42); border-radius: 1px; }
+@media (max-width: 560px) { .menubar .mb-group span:nth-child(n+4) { display: none; } }
+
+/* the notch itself */
+.notch {
+  position: absolute; top: 0; left: 50%;
+  width: 210px; height: 30px;
+  transform: translateX(-50%);
+  background: #060608;
+  border: 1px solid rgba(255,255,255,0.05); border-top: none;
+  border-radius: 0 0 17px 17px;
+  z-index: 5;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -12px rgba(0,0,0,0.7);
+  transition:
+    width  0.6s cubic-bezier(0.32, 1.28, 0.5, 1),
+    height 0.6s cubic-bezier(0.32, 1.28, 0.5, 1),
+    border-radius 0.5s ease,
+    box-shadow 0.5s ease;
+}
+.notch.is-open, .notch:hover, .notch:focus-visible, .notch:focus-within {
+  width: min(444px, calc(100% - 40px));
+  height: 262px;
+  border-radius: 0 0 28px 28px;
+  box-shadow: 0 50px 90px -34px rgba(0,0,0,0.9);
+  outline: none;
+}
+
+/* collapsed content */
+.notch-idle {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity 0.25s ease;
+}
+.notch-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--beige); box-shadow: 0 0 0 4px rgba(201,184,150,0.18);
+}
+.notch.is-open .notch-idle, .notch:hover .notch-idle, .notch:focus-within .notch-idle {
+  opacity: 0;
+}
+
+/* expanded panel */
+.notch-panel {
+  position: absolute; top: 0; left: 50%;
+  width: min(444px, calc(100vw - 80px));
+  transform: translate(-50%, -10px);
+  padding: 15px 17px 17px;
+  display: flex; flex-direction: column; gap: 11px;
+  font-family: var(--sans);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease, transform 0.4s ease;
+}
+.notch.is-open .notch-panel, .notch:hover .notch-panel, .notch:focus-within .notch-panel {
+  opacity: 1; transform: translate(-50%, 0); pointer-events: auto;
+  transition-delay: 0.16s;
+}
+
+.np-head { display: flex; align-items: center; justify-content: space-between; }
+.np-title {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 14.5px; font-weight: 600; color: var(--paper); letter-spacing: -0.01em;
+}
+.np-status {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--beige); box-shadow: 0 0 0 3px rgba(201,184,150,0.2);
+}
+.np-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 5px 11px; border-radius: 8px;
+}
+.np-sub {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.01em;
+  color: var(--faint); margin-top: -2px;
+}
+.np-mode {
+  display: inline-flex; align-items: center; gap: 7px; width: fit-content;
+  font-family: var(--sans); font-size: 12.5px; color: var(--paper);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  padding: 7px 13px; border-radius: 9px; cursor: pointer;
+}
+.np-tools { display: flex; gap: 9px; }
+.np-tool {
+  width: 38px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 9px;
+  color: var(--muted); transition: color 0.2s ease, border-color 0.2s ease;
+}
+.np-tool:hover { color: var(--beige); border-color: rgba(201,184,150,0.4); }
+.np-input {
+  display: flex; align-items: center; gap: 10px;
+  height: 46px; padding: 0 7px 0 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 13px;
+}
+.np-placeholder {
+  flex: 1; display: flex; align-items: center;
+  font-size: 14px; color: var(--muted);
+}
+.np-caret {
+  display: inline-block; width: 1.5px; height: 16px; margin-left: 2px;
+  background: var(--beige);
+}
+.notch.is-open .np-caret, .notch:hover .np-caret, .notch:focus-within .np-caret {
+  animation: caret 1.1s steps(1, end) infinite 0.7s;
+}
+.np-send {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--beige); color: #1a160d;
+}
+
+.stage-hint {
+  position: absolute; left: 0; right: 0; top: 78px;
+  text-align: center;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+  color: var(--faint);
+  transition: opacity 0.3s ease;
+  z-index: 4; pointer-events: none;
+}
+.notch.is-open ~ .stage-hint,
+.stage:hover .stage-hint { opacity: 0; }
 
 /* ════════════════════ line-draw animation ═════════════════ */
 /* Default (no JS): art is fully drawn and static.

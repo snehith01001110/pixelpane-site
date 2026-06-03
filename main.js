@@ -34,6 +34,49 @@
   arts.forEach(function (el) { io.observe(el); });
 })();
 
+/* Notch demo: auto-expand/collapse on a gentle loop while in view, so the
+   Alcove-style interaction is visible without requiring a hover. Hovering or
+   focusing the notch takes over via CSS; the loop pauses while that happens. */
+(function () {
+  "use strict";
+
+  var notch = document.getElementById("ppNotch");
+  if (!notch) return;
+
+  var reduce = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduce) { notch.classList.add("is-open"); return; }
+
+  var hovering = false;
+  var inView = false;
+  var timer;
+
+  notch.addEventListener("mouseenter", function () { hovering = true; });
+  notch.addEventListener("mouseleave", function () { hovering = false; });
+  notch.addEventListener("focus", function () { hovering = true; });
+  notch.addEventListener("blur", function () { hovering = false; });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { inView = e.isIntersecting; });
+    }, { threshold: 0.4 }).observe(notch);
+  } else {
+    inView = true;
+  }
+
+  function tick() {
+    if (!inView) {
+      notch.classList.remove("is-open");
+    } else if (!hovering) {
+      notch.classList.toggle("is-open");
+    }
+    var open = notch.classList.contains("is-open");
+    timer = setTimeout(tick, open ? 3200 : 1900);
+  }
+  timer = setTimeout(tick, 1400);
+})();
+
 /* Copy the contact email to the clipboard instead of opening a mail client. */
 (function () {
   "use strict";
