@@ -33,3 +33,50 @@
 
   arts.forEach(function (el) { io.observe(el); });
 })();
+
+/* Copy the contact email to the clipboard instead of opening a mail client. */
+(function () {
+  "use strict";
+
+  var btn = document.getElementById("copy-email");
+  if (!btn) return;
+
+  var email = btn.getAttribute("data-email");
+  var resetLabel = btn.getAttribute("data-label") || btn.textContent.trim();
+  var revertTimer;
+
+  function flash(text) {
+    btn.textContent = text;
+    btn.classList.add("is-copied");
+    clearTimeout(revertTimer);
+    revertTimer = setTimeout(function () {
+      btn.textContent = resetLabel;
+      btn.classList.remove("is-copied");
+    }, 2200);
+  }
+
+  function legacyCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  btn.addEventListener("click", function () {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(
+        function () { flash("Copied — " + email); },
+        function () { flash(legacyCopy(email) ? "Copied — " + email : email); }
+      );
+    } else {
+      flash(legacyCopy(email) ? "Copied — " + email : email);
+    }
+  });
+})();
