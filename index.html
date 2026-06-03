@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel Pane — A local-first assistant that lives in your notch</title>
+  <meta name="description" content="Pixel Pane is a local-first, notch-native AI assistant for macOS. Local by default, cloud by choice, with explicit file grants and confirmation before anything happens on your machine." />
+
+  <meta property="og:title" content="Pixel Pane" />
+  <meta property="og:description" content="A local-first, notch-native assistant for macOS. Local by default. Cloud by choice." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- structural frame lines -->
+  <div class="frame" aria-hidden="true">
+    <span class="frame-line frame-line--left"></span>
+    <span class="frame-line frame-line--right"></span>
+  </div>
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Pixel Pane home">
+      <span class="wordmark-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+          <rect x="2.5" y="3.5" width="19" height="17" rx="3.5" stroke="currentColor" stroke-width="1.4" />
+          <rect x="9" y="3.5" width="6" height="3" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+        </svg>
+      </span>
+      <span class="wordmark-text">Pixel&nbsp;Pane</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#how">How&nbsp;it&nbsp;works</a>
+      <a href="#principles">Privacy</a>
+      <a href="#access" class="nav-cta">Request&nbsp;access</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- ───────────────────────── HERO ───────────────────────── -->
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>Local-first · notch-native · macOS</p>
+        <h1 class="hero-title">
+          The assistant that<br />
+          stays <em>on your</em> machine.
+        </h1>
+        <p class="hero-sub">
+          Pixel&nbsp;Pane lives in the notch. It sees what you point it at, reasons
+          locally by default, and never touches a file or runs a command without
+          your word.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn--primary" href="#access">Request alpha access</a>
+          <a class="btn btn--ghost" href="#how">See how it works</a>
+        </div>
+        <ul class="hero-meta">
+          <li>Local by default</li>
+          <li>Cloud by choice</li>
+          <li>Confirmation before side effects</li>
+        </ul>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <svg class="line-art" viewBox="0 0 600 600" fill="none" role="presentation">
+          <!-- outer pane -->
+          <rect class="draw" pathLength="1" x="90" y="120" width="420" height="300" rx="26"
+                stroke="#f3efe6" stroke-width="1.4" />
+          <!-- notch -->
+          <path class="draw" pathLength="1" d="M255 120 h90 a14 14 0 0 1 -14 14 h-62 a14 14 0 0 1 -14 -14 z"
+                stroke="#c9b896" stroke-width="1.4" />
+          <!-- inner content lines -->
+          <line class="draw" pathLength="1" x1="135" y1="195" x2="320" y2="195" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+          <line class="draw" pathLength="1" x1="135" y1="232" x2="430" y2="232" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+          <line class="draw" pathLength="1" x1="135" y1="269" x2="380" y2="269" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+          <!-- caret -->
+          <line class="draw blink" pathLength="1" x1="135" y1="312" x2="135" y2="350" stroke="#c9b896" stroke-width="2" />
+          <!-- capture marquee -->
+          <rect class="draw" pathLength="1" x="345" y="300" width="120" height="92" rx="6"
+                stroke="#c9b896" stroke-width="1.2" stroke-dasharray="6 7" />
+          <!-- signal arcs -->
+          <path class="draw" pathLength="1" d="M150 470 q150 -70 300 0" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+          <path class="draw" pathLength="1" d="M120 500 q180 -95 360 0" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+          <!-- node -->
+          <circle class="draw" pathLength="1" cx="300" cy="478" r="6" stroke="#f3efe6" stroke-width="1.4" />
+        </svg>
+      </div>
+    </section>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <!-- ─────────────────────── HOW IT WORKS ─────────────────────── -->
+    <section class="how" id="how">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="section-title">Three steps. No surprises.</h2>
+        <p class="section-lede">
+          Every run is a deliberate loop: you grant context, the model proposes,
+          and the app executes only what you confirm. State is durable, so
+          nothing happens twice and nothing happens silently.
+        </p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-index">01</span>
+          <span class="step-icon" aria-hidden="true">
+            <svg class="line-art" viewBox="0 0 120 120" fill="none">
+              <rect class="draw" pathLength="1" x="26" y="26" width="68" height="50" rx="4"
+                    stroke="#c9b896" stroke-width="1.4" stroke-dasharray="5 6" />
+              <path class="draw" pathLength="1" d="M26 40 v-14 h14" stroke="#f3efe6" stroke-width="1.6" />
+              <path class="draw" pathLength="1" d="M94 62 v14 h-14" stroke="#f3efe6" stroke-width="1.6" />
+              <line class="draw" pathLength="1" x1="40" y1="92" x2="80" y2="92" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
+            </svg>
+          </span>
+          <h3 class="step-title">Capture</h3>
+          <p class="step-body">
+            Point at a region of the screen, an image, or a folder you've granted.
+            OCR and pixels stay transient — they're context, not a recording.
+          </p>
+        </li>
+
+        <li class="step">
+          <span class="step-index">02</span>
+          <span class="step-icon" aria-hidden="true">
+            <svg class="line-art" viewBox="0 0 120 120" fill="none">
+              <circle class="draw" pathLength="1" cx="60" cy="60" r="14" stroke="#f3efe6" stroke-width="1.5" />
+              <line class="draw" pathLength="1" x1="60" y1="32" x2="60" y2="18" stroke="#c9b896" stroke-width="1.4" />
+              <line class="draw" pathLength="1" x1="60" y1="88" x2="60" y2="102" stroke="#c9b896" stroke-width="1.4" />
+              <line class="draw" pathLength="1" x1="32" y1="60" x2="18" y2="60" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
+              <line class="draw" pathLength="1" x1="88" y1="60" x2="102" y2="60" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
+              <line class="draw" pathLength="1" x1="40" y1="40" x2="28" y2="28" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
+              <line class="draw" pathLength="1" x1="80" y1="80" x2="92" y2="92" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
+            </svg>
+          </span>
+          <h3 class="step-title">Reason</h3>
+          <p class="step-body">
+            A local model answers by default. Switch to cloud explicitly when you
+            want it — either way, the Mac app owns grants, evidence, and policy.
+          </p>
+        </li>
+
+        <li class="step">
+          <span class="step-index">03</span>
+          <span class="step-icon" aria-hidden="true">
+            <svg class="line-art" viewBox="0 0 120 120" fill="none">
+              <rect class="draw" pathLength="1" x="24" y="30" width="72" height="60" rx="8"
+                    stroke="#f3efe6" stroke-width="1.5" />
+              <path class="draw" pathLength="1" d="M44 60 l11 12 22 -24" stroke="#c9b896" stroke-width="2" />
+            </svg>
+          </span>
+          <h3 class="step-title">Confirm</h3>
+          <p class="step-body">
+            File writes, commands, and installs surface as drafts you approve.
+            Approved work runs exactly once, from an immutable record.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <!-- ─────────────────────── PRINCIPLES ─────────────────────── -->
+    <section class="principles" id="principles">
+      <div class="principles-grid">
+        <div class="principles-statement">
+          <p class="eyebrow">What it refuses to do</p>
+          <h2 class="section-title">
+            Built so trust is the<br />default, not a setting.
+          </h2>
+          <p class="section-lede">
+            Most assistants ask for the world up front. Pixel&nbsp;Pane is the
+            opposite — the boundaries are wired into the app, not into a prompt
+            you have to hope holds.
+          </p>
+          <a class="btn btn--ghost" href="#access">Request alpha access</a>
+        </div>
+
+        <ul class="principles-list">
+          <li class="principle">
+            <span class="principle-no" aria-hidden="true">No</span>
+            <div>
+              <h3>continuous recording</h3>
+              <p>It looks only when you ask it to. There is no always-on screen capture.</p>
+            </div>
+          </li>
+          <li class="principle">
+            <span class="principle-no" aria-hidden="true">No</span>
+            <div>
+              <h3>silent file access</h3>
+              <p>Your explicit grants are the only doorway to local files and folders.</p>
+            </div>
+          </li>
+          <li class="principle">
+            <span class="principle-no" aria-hidden="true">No</span>
+            <div>
+              <h3>hidden memory</h3>
+              <p>New chats start blank. Nothing carries across sessions behind your back.</p>
+            </div>
+          </li>
+          <li class="principle">
+            <span class="principle-no" aria-hidden="true">No</span>
+            <div>
+              <h3>unconfirmed side effects</h3>
+              <p>Risky commands and writes are denied or held until you approve them.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <!-- ─────────────────────── ACCESS / CTA ─────────────────────── -->
+    <section class="access" id="access">
+      <svg class="access-art line-art" viewBox="0 0 1200 200" fill="none" aria-hidden="true" preserveAspectRatio="none">
+        <path class="draw" pathLength="1" d="M0 150 Q300 60 600 110 T1200 90" stroke="rgba(243,239,230,0.30)" stroke-width="1.2" />
+        <path class="draw" pathLength="1" d="M0 175 Q300 95 600 140 T1200 120" stroke="#c9b896" stroke-width="1.2" />
+      </svg>
+      <div class="access-copy">
+        <p class="eyebrow">Alpha</p>
+        <h2 class="access-title">Want it in your notch?</h2>
+        <p class="access-sub">
+          Pixel&nbsp;Pane is in private alpha. Tell me a little about how you'd use
+          it and I'll get you a build.
+        </p>
+        <a class="btn btn--primary btn--lg" href="mailto:snehithn5@gmail.com?subject=Pixel%20Pane%20alpha%20access&body=Hi%20%E2%80%94%20I'd%20like%20to%20try%20Pixel%20Pane.%20Here's%20how%20I'd%20use%20it%3A">
+          Request access
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-mark">Pixel Pane</span>
+      <span class="footer-note">Local-first assistant for macOS · Private alpha</span>
+      <span class="footer-year">© 2026</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
