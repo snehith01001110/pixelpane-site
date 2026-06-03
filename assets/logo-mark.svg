@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Pixel Pane">
-  <!-- notch silhouette, drawn as an outline for use on dark surfaces -->
-  <path d="M12 6 H36 V21 A9 9 0 0 1 27 30 H21 A9 9 0 0 1 12 21 Z" stroke="#f3efe6" stroke-width="2.5"/>
-  <!-- the beige pixel -->
-  <rect x="20" y="12" width="8" height="8" rx="2" fill="#c9b896"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 36" fill="none" role="img" aria-label="Pixel Pane">
+  <!-- the pane: a stadium / pill outline -->
+  <rect x="3.5" y="4" width="113" height="28" rx="14" stroke="#f3efe6" stroke-width="2.4"/>
+  <!-- the cursor: a block caret waiting in the pane -->
+  <rect x="15" y="9" width="8" height="18" rx="2" stroke="#c9b896" stroke-width="2.2"/>
 </svg>
