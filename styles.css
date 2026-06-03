@@ -355,17 +355,6 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   max-width: 48ch;
   margin: 0 auto 36px;
 }
-.access-email {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  letter-spacing: 0.04em;
-  color: var(--faint);
-  margin: 18px 0 0;
-}
-.access-email span {
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 2px;
-}
 
 /* ════════════════════════════ FOOTER ══════════════════════ */
 .site-footer { border-top: 1px solid var(--line); position: relative; z-index: 2; }
