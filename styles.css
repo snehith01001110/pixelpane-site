@@ -205,30 +205,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   max-width: 46ch;
   margin: 0 0 36px;
 }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 44px; }
-.hero-meta {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 26px;
-}
-.hero-meta li {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--faint);
-  position: relative;
-  padding-left: 18px;
-}
-.hero-meta li::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 50%;
-  width: 8px; height: 1px;
-  background: var(--beige);
-  transform: translateY(-50%);
-}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
 
 /* ════════════════════════ HOW IT WORKS ════════════════════ */
