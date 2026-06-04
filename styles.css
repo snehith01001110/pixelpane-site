@@ -281,14 +281,14 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 .principle:last-child { border-bottom: 1px solid var(--line); }
 .principle-no {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 19px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--beige);
-  line-height: 1.6;
+  line-height: 1.25;
   flex: none;
-  width: 36px;
+  width: 56px;
 }
 .principle h3 {
   font-family: var(--display);
