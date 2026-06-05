@@ -331,6 +331,17 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   max-width: 48ch;
   margin: 0 auto 36px;
 }
+.access-fineprint {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 18px;
+}
+.access-fineprint a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.access-fineprint a:hover { color: var(--paper); }
 
 /* ════════════════════════════ FOOTER ══════════════════════ */
 .site-footer { border-top: 1px solid var(--line); position: relative; z-index: 2; }
