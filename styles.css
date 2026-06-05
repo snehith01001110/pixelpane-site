@@ -323,7 +323,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   margin: 0 0 20px;
 }
 .access-logo { display: flex; justify-content: center; margin-bottom: 26px; color: var(--paper); }
-.access-logo svg { width: 84px; height: auto; }
+.access-logo svg { width: 48px; height: auto; }
 .access .eyebrow { justify-content: center; }
 .access-sub {
   color: var(--muted);
@@ -356,7 +356,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 .footer-mark { display: inline-flex; align-items: center; gap: 10px;
   font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -0.015em; }
-.footer-mark svg { width: 38px; height: auto; color: var(--paper); }
+.footer-mark svg { width: 20px; height: auto; color: var(--paper); }
 .footer-note, .footer-year {
   font-family: var(--mono);
   font-size: 11.5px;
