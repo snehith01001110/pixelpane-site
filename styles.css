@@ -147,8 +147,9 @@ em { font-style: italic; }
   transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
 }
 .nav-cta:hover { border-color: var(--beige); background: rgba(201,184,150,0.08); }
+.nav-github { display: inline-flex; align-items: center; }
 @media (max-width: 600px) {
-  .site-nav a:not(.nav-cta) { display: none; }
+  .site-nav a:not(.nav-cta):not(.nav-github) { display: none; }
 }
 
 /* ── buttons ───────────────────────────────────────────────── */
