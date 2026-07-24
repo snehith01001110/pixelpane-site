@@ -403,6 +403,9 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 .demo { padding-top: clamp(72px, 11vw, 130px); padding-bottom: clamp(72px, 11vw, 130px); }
 
 .stage {
+  /* shared width for the expanded notch + its panel: stays clear of the
+     stage's own border/gutter so the panel never kisses the frame */
+  --panel-w: min(600px, calc(100vw - 2 * var(--gutter) - 48px));
   position: relative;
   height: 520px;
   margin-top: 8px;
@@ -421,10 +424,11 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
     0 50px 90px -50px rgba(0,0,0,0.9);
 }
 @media (max-width: 560px) {
-  .stage { height: 460px; }
-  .desk-window { top: 92px; right: auto; left: 50%; transform: translateX(-42%); width: 78%; }
-  .dw-body { min-height: 120px; padding: 20px 22px; }
-  .dw-text { font-size: 18px; }
+  .stage { height: 430px; }
+  .desk-window { top: 84px; right: auto; left: 50%; transform: translateX(-42%); width: 78%; }
+  .dw-bar { height: 30px; }
+  .dw-body { min-height: 104px; padding: 18px 20px; }
+  .dw-text { font-size: 17px; }
   .dock { gap: 7px; padding: 6px 8px; bottom: 12px; }
   .dock-app { width: 36px; height: 36px; border-radius: 9px; }
   .dock-sep { height: 30px; }
@@ -452,7 +456,12 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   border-radius: 2px; position: relative; }
 .mb-batt::before { content: ""; position: absolute; inset: 1.5px; right: 5px;
   background: rgba(243,239,230,0.42); border-radius: 1px; }
-@media (max-width: 560px) { .menubar .mb-group span:nth-child(n+4) { display: none; } }
+@media (max-width: 560px) {
+  /* keep only "Finder" on the left and the battery + clock on the right, so
+     nothing slides underneath the notch */
+  .menubar .mb-group:first-child span:nth-child(n+3),
+  .menubar .mb-group:last-child span:first-child { display: none; }
+}
 
 /* the notch itself */
 .notch {
@@ -473,11 +482,17 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
     box-shadow 0.5s ease;
 }
 .notch.is-open, .notch:hover, .notch:focus-visible, .notch:focus-within {
-  width: min(600px, calc(100vw - 64px));
+  width: var(--panel-w);
   height: 120px;
   border-radius: 0 0 22px 22px;
   box-shadow: 0 50px 90px -34px rgba(0,0,0,0.9);
   outline: none;
+}
+
+/* a 208px sliver is over half the stage on a phone — shrink it back to the
+   proportions of a real notch (must stay after the base .notch rule) */
+@media (max-width: 560px) {
+  .notch { width: 156px; }
 }
 
 /* collapsed content */
@@ -504,7 +519,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
    Warm-white (#f2ebd9) chrome on near-black, matching the release palette. */
 .notch-panel {
   position: absolute; top: 0; left: 50%;
-  width: min(600px, calc(100vw - 64px));
+  width: var(--panel-w);
   transform: translate(-50%, -8px);
   padding: 14px 18px 16px;
   display: flex; flex-direction: column; gap: 16px;
@@ -680,6 +695,8 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 /* keep the chip row from overflowing the notch on small screens */
 @media (max-width: 620px) {
   .notch-panel { padding-left: 15px; padding-right: 15px; }
+  /* 16px stops iOS Safari from zooming the page when the field is tapped */
+  .np-textarea { font-size: 16px; }
 }
 @media (max-width: 430px) {
   .notch-panel { padding-left: 13px; padding-right: 13px; gap: 13px; }
