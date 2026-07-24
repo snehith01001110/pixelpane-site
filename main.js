@@ -34,48 +34,458 @@
   arts.forEach(function (el) { io.observe(el); });
 })();
 
-/* Notch demo: auto-expand/collapse on a gentle loop while in view, so the
-   Alcove-style interaction is visible without requiring a hover. Hovering or
-   focusing the notch takes over via CSS; the loop pauses while that happens. */
+/* Notch demo — a working miniature of Pixel Pane's v1.1 notch assistant.
+   The panel opens on hover (and on an idle loop for discovery), you can type
+   and "send", switch mode/model, grant file sources, copy the chat, and start
+   over. Replies are scripted locally — there's no network — but every control
+   is live. */
 (function () {
   "use strict";
 
   var notch = document.getElementById("ppNotch");
-  if (!notch) return;
+  var panel = document.getElementById("ppPanel");
+  if (!notch || !panel) return;
 
   var reduce = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (reduce) { notch.classList.add("is-open"); return; }
+  var $ = function (sel, root) { return (root || panel).querySelector(sel); };
+  var input       = $("#ppInput");
+  var sendBtn     = $("#ppSend");
+  var newBtn      = $("#ppNew");
+  var transcript  = $("#ppTranscript");
+  var fileInput   = $("#ppFileInput");
+  var folderInput = $("#ppFolderInput");
+  var modeIcoEl   = $('[data-role="mode-ico"]');
+  var modeLabelEl = $('[data-role="mode-label"]');
+  var modelChip   = $("#ppModelChip");
+  var modelLabelEl= $('[data-role="model-label"]');
+  var srcIcoEl    = $('[data-role="sources-ico"]');
+  var srcLabelEl  = $('[data-role="sources-label"]');
+  var srcListEl   = $('[data-role="sources-list"]');
+  var srcClearBtn = $('[data-action="clear"]');
+  var srcSep      = $(".np-menu-sep--sources");
 
+  // ── state ────────────────────────────────────────────────────────────────
+  var mode = "Local";            // Local | Cloud | Custom
+  var model = "Auto";
+  var sources = [];              // [{name, dir}]
+  var msgCount = 0;
+  var running = false;
+  var streamTimer = null;
   var hovering = false;
-  var inView = false;
-  var timer;
+  var isFocused = false;
+  var inView = true;
+  var loopEnabled = !reduce;
+  var loopTimer = null;
+  var collapseTimer = null;
 
-  notch.addEventListener("mouseenter", function () { hovering = true; });
-  notch.addEventListener("mouseleave", function () { hovering = false; });
-  notch.addEventListener("focus", function () { hovering = true; });
-  notch.addEventListener("blur", function () { hovering = false; });
+  // ── inline SVGs used when swapping chip icons ──────────────────────────────
+  var ICON = {
+    modeLocal:  '<svg viewBox="0 0 18 16" width="12" height="11" fill="none" stroke="currentColor"><rect x="4" y="2.6" width="10" height="7.2" rx="1.3" stroke-width="1.2"/><path d="M2.4 12.4h13.2" stroke-width="1.2" stroke-linecap="round"/><path d="M7.5 6.1v-.8a1.5 1.5 0 0 1 3 0v.8" stroke-width="1"/><rect x="7.1" y="6" width="3.8" height="3" rx="0.7" fill="currentColor" stroke="none"/></svg>',
+    modeCloud:  '<svg viewBox="0 0 18 14" width="12" height="10" fill="none" stroke="currentColor"><path d="M5 11.3h7.4a3 3 0 0 0 .3-5.96A4 4 0 0 0 5 5.9 2.7 2.7 0 0 0 5 11.3z" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    modeCustom: '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor"><circle cx="5.6" cy="6.4" r="2.7" stroke-width="1.2"/><path d="M7.6 8.4 13.2 14M11 12.2l1.3-1.3M12.4 13.4l1.2-1.2" stroke-width="1.2" stroke-linecap="round"/></svg>',
+    srcEmpty:   '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor"><path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    srcFilled:  '<svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M2 5.2h4.2l1.3 1.6H14a.6.6 0 0 1 .6.6v5.2a.6.6 0 0 1-.6.6H2a.6.6 0 0 1-.6-.6V5.8A.6.6 0 0 1 2 5.2z"/></svg>',
+    docSmall:   '<svg class="np-src-ico" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor"><path d="M4 2.6h5l3 3v7.8H4z" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    folderSmall:'<svg class="np-src-ico" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor"><path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    remove:     '<svg viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor"><path d="M4 4l6 6M10 4l-6 6" stroke-width="1.4" stroke-linecap="round"/></svg>'
+  };
 
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { inView = e.isIntersecting; });
-    }, { threshold: 0.4 }).observe(notch);
-  } else {
-    inView = true;
+  // ── panel open / collapse with content-driven height ───────────────────────
+  function stageMax() {
+    var stage = notch.parentElement;
+    var h = (stage ? stage.clientHeight : 400) - 20;
+    return Math.max(150, Math.min(h, 384));
   }
-
-  function tick() {
-    if (!inView) {
-      notch.classList.remove("is-open");
-    } else if (!hovering) {
-      notch.classList.toggle("is-open");
+  function layout() {
+    if (!notch.classList.contains("is-open")) return;
+    var max = stageMax();
+    // Leave room for the chrome (chip row + composer + paddings) so the
+    // transcript scrolls rather than pushing the panel past the stage.
+    transcript.style.maxHeight = Math.max(80, max - 134) + "px";
+    var target = Math.min(max, Math.max(120, panel.scrollHeight));
+    notch.style.height = target + "px";
+  }
+  function openPanel(focusInput) {
+    if (collapseTimer) { clearTimeout(collapseTimer); collapseTimer = null; }
+    notch.classList.add("is-open");
+    layout();
+    if (focusInput && !isTouch()) {
+      requestAnimationFrame(function () { try { input.focus(); } catch (e) {} });
     }
-    var open = notch.classList.contains("is-open");
-    timer = setTimeout(tick, open ? 3200 : 1900);
   }
-  timer = setTimeout(tick, 1400);
+  function pinned() { return running || hovering || isFocused || menuOpenName() != null; }
+  function collapse() {
+    if (running) return;
+    closeAllMenus();
+    if (isFocused) { input.blur(); isFocused = false; }
+    notch.classList.remove("is-open");
+    notch.style.height = "";
+  }
+  function scheduleCollapse() {
+    if (collapseTimer) clearTimeout(collapseTimer);
+    collapseTimer = setTimeout(function () {
+      if (!pinned()) collapse();
+    }, 240);
+  }
+  function isTouch() {
+    return window.matchMedia && window.matchMedia("(hover: none)").matches;
+  }
+  function stopLoop() {
+    loopEnabled = false;
+    if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
+  }
+  function scrollTranscript() {
+    transcript.scrollTop = transcript.scrollHeight;
+  }
+
+  // ── the chat ───────────────────────────────────────────────────────────────
+  function metaLabel() {
+    if (mode === "Cloud") return "Cloud";
+    if (mode === "Custom") return "Custom";
+    return model === "Auto" ? "Local" : model;
+  }
+  function reply(text) {
+    var t = text.toLowerCase();
+    var body;
+    if (/(^|\b)(hi|hey|hello|yo|sup)(\b|$)/.test(t)) {
+      body = "Hey — I live in your notch. Point me at something on screen, or just ask.";
+    } else if (t.indexOf("what") > -1 && (t.indexOf("do") > -1 || t.indexOf("can") > -1)) {
+      body = "I read whatever you point me at, then extract text, translate, explain code, or run a quick task — and I only touch a file or run a command after you confirm.";
+    } else if (t.indexOf("privacy") > -1 || t.indexOf("local") > -1 || t.indexOf("data") > -1 || t.indexOf("track") > -1) {
+      body = "By default everything runs on-device: no continuous recording, no silent file access, no memory carried between chats. Cloud is opt-in, one request at a time.";
+    } else if (t.indexOf("price") > -1 || t.indexOf("cost") > -1 || t.indexOf("free") > -1 || t.indexOf("download") > -1) {
+      body = "Pixel Pane is a free download for macOS, with free updates.";
+    } else if (t.indexOf("who") > -1 || t.indexOf("your name") > -1) {
+      body = "I'm Pixel Pane — a local-first assistant that lives in the Mac notch.";
+    } else {
+      var where = mode === "Cloud"
+        ? "through the opt-in cloud route"
+        : "on a " + metaLabel() + " model, right on your Mac";
+      var withSrc = sources.length
+        ? " using your " + sources.length + " granted source" + (sources.length > 1 ? "s" : "")
+        : "";
+      body = "Good question. In the app I'd work that out " + where + withSrc +
+             ", then surface any file writes or commands for you to confirm first.";
+    }
+    return body;
+  }
+  function addTurn(question) {
+    var turn = document.createElement("div");
+    turn.className = "np-turn";
+    var q = document.createElement("div");
+    q.className = "np-q";
+    q.textContent = question;
+    var a = document.createElement("div");
+    a.className = "np-a";
+    a.innerHTML = '<div class="np-thinking"><span class="np-burst"></span>Thinking</div>';
+    turn.appendChild(q);
+    turn.appendChild(a);
+    transcript.appendChild(turn);
+    transcript.hidden = false;
+    msgCount++;
+    return a;
+  }
+  function send() {
+    var text = input.value.trim();
+    if (!text || running) return;
+    stopLoop();
+    var answerEl = addTurn(text);
+    input.value = "";
+    autoGrow();
+    setRunning(true);
+    updateChat();
+    openPanel(false);
+    scrollTranscript();
+
+    var full = reply(text);
+    var think = reduce ? 120 : 620;
+    streamTimer = setTimeout(function () {
+      answerEl.innerHTML =
+        '<div class="np-a-meta">' + escapeHtml(metaLabel()) + '</div>' +
+        '<div class="np-a-text"></div>';
+      var textEl = answerEl.querySelector(".np-a-text");
+      if (reduce) { textEl.textContent = full; finishStream(); return; }
+      var words = full.split(" ");
+      var i = 0;
+      textEl.innerHTML = '<span class="np-cursor"></span>';
+      (function tickWord() {
+        i++;
+        textEl.innerHTML = escapeHtml(words.slice(0, i).join(" ")) +
+          (i < words.length ? '<span class="np-cursor"></span>' : "");
+        layout(); scrollTranscript();
+        if (i < words.length) {
+          streamTimer = setTimeout(tickWord, 34 + Math.min(46, words[i - 1].length * 7));
+        } else {
+          finishStream();
+        }
+      })();
+    }, think);
+  }
+  function finishStream() {
+    running = false;
+    streamTimer = null;
+    setRunning(false);
+    updateChat();
+    layout(); scrollTranscript();
+    if (isFocused || (!isTouch() && notch.classList.contains("is-open"))) {
+      try { input.focus(); } catch (e) {}
+    }
+  }
+  function cancelStream() {
+    if (!running) return;
+    if (streamTimer) { clearTimeout(streamTimer); streamTimer = null; }
+    var last = transcript.querySelector(".np-turn:last-child .np-a");
+    if (last) {
+      var textEl = last.querySelector(".np-a-text");
+      if (!textEl) {
+        last.innerHTML = '<div class="np-a-meta">' + escapeHtml(metaLabel()) +
+          '</div><div class="np-a-text">Stopped.</div>';
+      } else {
+        var cur = textEl.querySelector(".np-cursor");
+        if (cur) cur.remove();
+        if (!textEl.textContent.trim()) textEl.textContent = "Stopped.";
+      }
+    }
+    finishStream();
+  }
+  function newChat() {
+    if (running) cancelStream();
+    transcript.innerHTML = "";
+    transcript.hidden = true;
+    msgCount = 0;
+    updateChat();
+    openPanel(true);
+  }
+  function setRunning(on) {
+    running = on;
+    sendBtn.classList.toggle("is-running", on);
+    sendBtn.setAttribute("aria-label", on ? "Stop" : "Send");
+    sendBtn.title = on ? "Stop" : "Send";
+    updateSendState();
+  }
+  function updateSendState() {
+    sendBtn.disabled = running ? false : input.value.trim() === "";
+  }
+  function updateChat() {
+    updateSendState();
+    var has = msgCount > 0;
+    newBtn.disabled = !has || running;
+  }
+
+  // ── composer ────────────────────────────────────────────────────────────────
+  function autoGrow() {
+    input.style.height = "auto";
+    input.style.height = Math.min(92, input.scrollHeight) + "px";
+    layout();
+  }
+  input.addEventListener("input", function () { autoGrow(); updateSendState(); });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+    else if (e.key === "Escape") { input.blur(); }
+  });
+  input.addEventListener("focus", function () { isFocused = true; stopLoop(); openPanel(false); });
+  input.addEventListener("blur", function () { isFocused = false; });
+  sendBtn.addEventListener("click", function () { running ? cancelStream() : send(); });
+  newBtn.addEventListener("click", newChat);
+
+  // ── dropdown menus (moved to <body> so the notch clip can't cut them) ────────
+  var menus = {};   // name -> { wrap, chip, menu }
+  panel.querySelectorAll(".np-menu-wrap").forEach(function (wrap) {
+    var name = wrap.getAttribute("data-menu");
+    var chip = wrap.querySelector(".np-chip");
+    var menu = wrap.querySelector(".np-menu");
+    document.body.appendChild(menu);          // escape the clipping ancestor
+    menus[name] = { wrap: wrap, chip: chip, menu: menu };
+    chip.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleMenu(name);
+    });
+    menu.addEventListener("click", function (e) { e.stopPropagation(); });
+  });
+  function menuOpenName() {
+    for (var n in menus) if (menus[n].menu.classList.contains("is-open")) return n;
+    return null;
+  }
+  function positionMenu(entry) {
+    var m = entry.menu;
+    m.hidden = false;
+    var r = entry.chip.getBoundingClientRect();
+    var mw = m.offsetWidth, mh = m.offsetHeight;
+    var left = r.left;
+    if (left + mw > window.innerWidth - 8) left = r.right - mw;
+    left = Math.max(8, Math.min(left, window.innerWidth - mw - 8));
+    var top = r.bottom + 6;
+    if (top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 6);
+    m.style.left = left + "px";
+    m.style.top = top + "px";
+  }
+  function openMenu(name) {
+    closeAllMenus(name);
+    var entry = menus[name];
+    stopLoop();
+    positionMenu(entry);
+    // reflow so the transition runs from the hidden state
+    void entry.menu.offsetWidth;
+    entry.menu.classList.add("is-open");
+    entry.chip.setAttribute("aria-expanded", "true");
+  }
+  function closeMenu(name) {
+    var entry = menus[name];
+    if (!entry || entry.menu.hidden) return;
+    entry.menu.classList.remove("is-open");
+    entry.chip.setAttribute("aria-expanded", "false");
+    var m = entry.menu;
+    setTimeout(function () { if (!m.classList.contains("is-open")) m.hidden = true; }, 150);
+  }
+  function closeAllMenus(except) {
+    for (var n in menus) if (n !== except) closeMenu(n);
+  }
+  function toggleMenu(name) {
+    if (menus[name].menu.classList.contains("is-open")) closeMenu(name);
+    else openMenu(name);
+  }
+
+  // menu item handling
+  Object.keys(menus).forEach(function (name) {
+    menus[name].menu.addEventListener("click", function (e) {
+      var item = e.target.closest(".np-menuitem");
+      if (!item) return;
+      var value = item.getAttribute("data-value");
+      var action = item.getAttribute("data-action");
+      if (name === "model" && value) {
+        setChecked(menus.model.menu, item);
+        model = value;
+        modelLabelEl.textContent = value;
+      } else if (name === "mode" && value) {
+        setChecked(menus.mode.menu, item);
+        setMode(value);
+      } else if (name === "sources" && action === "folder") {
+        folderInput.click();
+      } else if (name === "sources" && action === "file") {
+        fileInput.click();
+      } else if (name === "sources" && action === "clear") {
+        sources = []; renderSources();
+      }
+      // "Manage Models…" opens Settings in the real app — a no-op here.
+      closeMenu(name);
+      if (!isTouch() && action !== "folder" && action !== "file") {
+        try { input.focus(); } catch (err) {}
+      }
+    });
+  });
+  function setChecked(menu, item) {
+    menu.querySelectorAll('[role="menuitemradio"]').forEach(function (el) {
+      el.setAttribute("aria-checked", el === item ? "true" : "false");
+    });
+  }
+  function setMode(value) {
+    mode = value;
+    modeLabelEl.textContent = value;
+    modeIcoEl.innerHTML =
+      value === "Cloud" ? ICON.modeCloud :
+      value === "Custom" ? ICON.modeCustom : ICON.modeLocal;
+    // The model chip is a local-route control — the app hides it off-Local.
+    modelChip.parentElement.style.display = value === "Local" ? "" : "none";
+    layout();
+  }
+
+  // ── file sources ─────────────────────────────────────────────────────────────
+  fileInput.addEventListener("change", function () {
+    Array.prototype.forEach.call(fileInput.files, function (f) {
+      sources.push({ name: f.name, dir: false });
+    });
+    fileInput.value = "";
+    renderSources();
+  });
+  folderInput.addEventListener("change", function () {
+    var names = {};
+    Array.prototype.forEach.call(folderInput.files, function (f) {
+      var top = (f.webkitRelativePath || f.name).split("/")[0];
+      names[top] = true;
+    });
+    Object.keys(names).forEach(function (n) { sources.push({ name: n, dir: true }); });
+    folderInput.value = "";
+    renderSources();
+  });
+  function renderSources() {
+    var n = sources.length;
+    srcLabelEl.innerHTML = n === 0 ? "No&nbsp;Sources" : (n === 1 ? "1&nbsp;Source" : n + "&nbsp;Sources");
+    srcIcoEl.innerHTML = n === 0 ? ICON.srcEmpty : ICON.srcFilled;
+    srcListEl.innerHTML = "";
+    sources.forEach(function (s, idx) {
+      var row = document.createElement("div");
+      row.className = "np-menu-source";
+      row.innerHTML = (s.dir ? ICON.folderSmall : ICON.docSmall) +
+        '<span class="np-src-name"></span>' +
+        '<button class="np-src-remove" type="button" aria-label="Remove">' + ICON.remove + "</button>";
+      row.querySelector(".np-src-name").textContent = s.name;
+      row.querySelector(".np-src-remove").addEventListener("click", function (e) {
+        e.stopPropagation();
+        sources.splice(idx, 1);
+        renderSources();
+        positionMenu(menus.sources); // height changed
+      });
+      srcListEl.appendChild(row);
+    });
+    var hasAny = n > 0;
+    srcClearBtn.hidden = !hasAny;
+    srcSep.hidden = !hasAny;
+    if (menus.sources.menu.classList.contains("is-open")) positionMenu(menus.sources);
+  }
+
+  // ── open / collapse triggers ─────────────────────────────────────────────────
+  notch.addEventListener("mouseenter", function () { hovering = true; openPanel(false); });
+  notch.addEventListener("mouseleave", function () { hovering = false; scheduleCollapse(); });
+  // Menus live at body level; hovering them must keep the panel alive.
+  Object.keys(menus).forEach(function (name) {
+    menus[name].menu.addEventListener("mouseenter", function () { hovering = true; });
+    menus[name].menu.addEventListener("mouseleave", function () { hovering = false; scheduleCollapse(); });
+  });
+
+  notch.addEventListener("click", function (e) {
+    if (e.target.closest(".np-chip, .np-menu, .np-iconbtn, .np-src-remove")) return;
+    openPanel(true);
+  });
+  notch.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target === notch) {
+      e.preventDefault(); openPanel(true);
+    } else if (e.key === "Escape") {
+      if (menuOpenName()) closeAllMenus();
+      else collapse();
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!panel.contains(e.target) && !e.target.closest(".np-menu")) {
+      closeAllMenus();
+      if (!running) { hovering = false; collapse(); }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && menuOpenName()) closeAllMenus();
+  });
+  window.addEventListener("resize", function () { closeAllMenus(); layout(); });
+  window.addEventListener("scroll", function () { closeAllMenus(); }, { passive: true });
+
+  // Cursor only: the panel opens on hover (desktop) or tap (touch) — never on a
+  // timer. Touch devices can't hover, so nudge them to tap instead of "hover".
+  if (isTouch()) {
+    var hintEl = document.querySelector(".stage-hint");
+    if (hintEl) hintEl.textContent = "tap the notch ↑";
+  }
+
+  // initial paint
+  updateChat();
+  setMode("Local");
 })();
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
 
 /* Copy the contact email to the clipboard instead of opening a mail client. */
 (function () {

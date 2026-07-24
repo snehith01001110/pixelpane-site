@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=9" />
+  <link rel="stylesheet" href="styles.css?v=19" />
 </head>
 <body>
   <!-- structural frame lines -->
@@ -95,39 +95,145 @@
           </span>
         </div>
 
+        <!-- a running TextEdit window on the desktop -->
+        <div class="desk-window" aria-hidden="true">
+          <div class="dw-bar">
+            <span class="dw-lights"><i></i><i></i><i></i></span>
+            <span class="dw-title">demo</span>
+          </div>
+          <div class="dw-body">
+            <p class="dw-text">demo me by hovering over the notch</p>
+          </div>
+        </div>
+
+        <!-- macOS dock -->
+        <div class="dock" aria-hidden="true">
+          <span class="dock-app" style="--c1:#4aa8ff;--c2:#1667d8">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><circle cx="12" cy="12" r="8.4" stroke="rgba(255,255,255,0.92)" stroke-width="1.4"/><path d="M12 12 16 8 12 12 8 16z" fill="#fff"/><path d="M12 12 8 8 12 12 16 16z" fill="rgba(255,255,255,0.5)"/></svg>
+          </span>
+          <span class="dock-app" style="--c1:#5ff07a;--c2:#1fbb45">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M12 5.5c-4.1 0-7.5 2.6-7.5 6 0 1.7.9 3.2 2.3 4.3-.2 1-.8 2-1.6 2.7 1.5.1 3-.4 4.1-1.2.8.2 1.7.4 2.7.4 4.1 0 7.5-2.6 7.5-6s-3.4-6.2-7.5-6.2z"/></svg>
+          </span>
+          <span class="dock-app" style="--c1:#ffe08a;--c2:#f4c64c">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.7" stroke-linecap="round"><path d="M7 9h10M7 13h10M7 17h6"/></svg>
+          </span>
+          <span class="dock-app" style="--c1:#ffffff;--c2:#eef1f5">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#1667d8" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M14.4 5.6l4 4-8.4 8.4H6v-4z"/></svg>
+          </span>
+          <span class="dock-sep"></span>
+          <span class="dock-app dock-app--pp" style="--c1:#141416;--c2:#050506">
+            <svg viewBox="0 0 64 64" width="27" height="27"><path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896"/></svg>
+          </span>
+        </div>
+
         <div class="notch" id="ppNotch" tabindex="0" role="button" aria-label="Expand the Pixel Pane window">
           <!-- collapsed state: just a plain black sliver, like the real notch -->
           <span class="notch-idle"></span>
 
-          <!-- expanded state: the Pixel Pane panel -->
-          <div class="notch-panel">
-            <div class="np-head">
-              <span class="np-title"><span class="np-status"></span>Pixel Pane</span>
-              <span class="np-chip">
-                <svg viewBox="0 0 16 16" width="13" height="13" fill="none"><path d="M2 4.5h4l1.4 1.8H14V12H2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-                3 Files
-              </span>
-            </div>
-            <div class="np-sub">Ready&nbsp; ·&nbsp; Local — Qwen3.6-35B-A3B</div>
+          <!-- expanded state: the Pixel Pane assistant panel (matches the v1.1 release) -->
+          <div class="notch-panel" id="ppPanel">
+            <!-- chip row: model  |  mode · sources -->
+            <div class="np-chiprow">
+              <div class="np-menu-wrap" data-menu="model">
+                <button class="np-chip np-chip--model" id="ppModelChip" type="button" tabindex="-1" aria-haspopup="true" aria-expanded="false">
+                  <svg class="np-ico" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" aria-hidden="true">
+                    <rect x="4.7" y="4.7" width="6.6" height="6.6" rx="1.3" stroke-width="1.2" />
+                    <rect x="6.8" y="6.8" width="2.4" height="2.4" rx="0.6" fill="currentColor" stroke="none" />
+                    <g stroke-width="1.1" stroke-linecap="round"><path d="M6.4 4.7V2.9M9.6 4.7V2.9M6.4 13.1v-1.8M9.6 13.1v-1.8M4.7 6.4H2.9M4.7 9.6H2.9M13.1 6.4h-1.8M13.1 9.6h-1.8" /></g>
+                  </svg>
+                  <span class="np-chip-value" data-role="model-label">Auto</span>
+                  <svg class="np-chev" viewBox="0 0 12 12" width="7" height="7" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2.6 4.6 6 8l3.4-3.4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div class="np-menu" role="menu" hidden>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Auto" aria-checked="true">Auto</button>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Qwen3.6-35B-A3B" aria-checked="false">Qwen3.6-35B-A3B</button>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Llama-3.3-8B" aria-checked="false">Llama-3.3-8B</button>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Apple FM" aria-checked="false">Apple&nbsp;Foundation</button>
+                </div>
+              </div>
 
-            <button class="np-mode" type="button" tabindex="-1">
-              <svg viewBox="0 0 16 16" width="13" height="13" fill="none"><rect x="3" y="3.5" width="10" height="6.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 12.5h13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-              Local
-            </button>
+              <span class="np-chiprow-gap"></span>
 
-            <div class="np-tools">
-              <span class="np-tool" aria-hidden="true"><svg viewBox="0 0 18 18" width="16" height="16" fill="none"><path d="M11.5 3.5l3 3-7.5 7.5H4v-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
-              <span class="np-tool" aria-hidden="true"><svg viewBox="0 0 18 18" width="16" height="16" fill="none"><path d="M2.5 5h5l1.6 2H15.5v7H2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
-              <span class="np-tool" aria-hidden="true"><svg viewBox="0 0 18 18" width="16" height="16" fill="none"><rect x="6" y="6" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 12V4.5A1.5 1.5 0 015.5 3H12" stroke="currentColor" stroke-width="1.3"/></svg></span>
-              <span class="np-tool" aria-hidden="true"><svg viewBox="0 0 18 18" width="16" height="16" fill="none"><rect x="3" y="4" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="6.7" cy="7.5" r="1.1" fill="currentColor"/><path d="M4 13l3.5-3.5 2.5 2.5 2-2L15 12.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+              <div class="np-menu-wrap" data-menu="mode">
+                <button class="np-chip np-chip--mode" id="ppModeChip" type="button" tabindex="-1" aria-haspopup="true" aria-expanded="false">
+                  <span class="np-chip-ico" data-role="mode-ico">
+                    <svg viewBox="0 0 18 16" width="12" height="11" fill="none" stroke="currentColor" aria-hidden="true">
+                      <rect x="4" y="2.6" width="10" height="7.2" rx="1.3" stroke-width="1.2" />
+                      <path d="M2.4 12.4h13.2" stroke-width="1.2" stroke-linecap="round" />
+                      <path d="M7.5 6.1v-.8a1.5 1.5 0 0 1 3 0v.8" stroke-width="1" />
+                      <rect x="7.1" y="6" width="3.8" height="3" rx="0.7" fill="currentColor" stroke="none" />
+                    </svg>
+                  </span>
+                  <span class="np-chip-value" data-role="mode-label">Local</span>
+                  <svg class="np-chev" viewBox="0 0 12 12" width="7" height="7" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2.6 4.6 6 8l3.4-3.4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div class="np-menu" role="menu" hidden>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Local" aria-checked="true">
+                    <svg class="np-mi-ico" viewBox="0 0 18 16" width="13" height="12" fill="none" stroke="currentColor" aria-hidden="true"><rect x="4" y="2.6" width="10" height="7.2" rx="1.3" stroke-width="1.2" /><path d="M2.4 12.4h13.2" stroke-width="1.2" stroke-linecap="round" /><rect x="7.1" y="6" width="3.8" height="3" rx="0.7" fill="currentColor" stroke="none" /><path d="M7.5 6.1v-.8a1.5 1.5 0 0 1 3 0v.8" stroke-width="1" /></svg>
+                    Local
+                  </button>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Cloud" aria-checked="false">
+                    <svg class="np-mi-ico" viewBox="0 0 18 14" width="13" height="11" fill="none" stroke="currentColor" aria-hidden="true"><path d="M5 11.3h7.4a3 3 0 0 0 .3-5.96A4 4 0 0 0 5 5.9 2.7 2.7 0 0 0 5 11.3z" stroke-width="1.2" stroke-linejoin="round" /></svg>
+                    Cloud
+                  </button>
+                  <button class="np-menuitem" role="menuitemradio" data-value="Custom" aria-checked="false">
+                    <svg class="np-mi-ico" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="5.6" cy="6.4" r="2.7" stroke-width="1.2" /><path d="M7.6 8.4 13.2 14M11 12.2l1.3-1.3M12.4 13.4l1.2-1.2" stroke-width="1.2" stroke-linecap="round" /></svg>
+                    Custom
+                  </button>
+                </div>
+              </div>
+
+              <div class="np-menu-wrap" data-menu="sources">
+                <button class="np-chip np-chip--sources" id="ppSourcesChip" type="button" tabindex="-1" aria-haspopup="true" aria-expanded="false">
+                  <span class="np-chip-ico" data-role="sources-ico">
+                    <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" aria-hidden="true">
+                      <path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <span class="np-chip-value np-chip-label" data-role="sources-label">No&nbsp;Sources</span>
+                  <svg class="np-chev" viewBox="0 0 12 12" width="7" height="7" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2.6 4.6 6 8l3.4-3.4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div class="np-menu" role="menu" hidden>
+                  <button class="np-menuitem np-menuitem--action" data-action="folder" role="menuitem">
+                    <svg class="np-mi-ico" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round" /><path d="M8 8.4v3.2M6.4 10h3.2" stroke-width="1.2" stroke-linecap="round" /></svg>
+                    Choose Folder…
+                  </button>
+                  <button class="np-menuitem np-menuitem--action" data-action="file" role="menuitem">
+                    <svg class="np-mi-ico" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 2.4h5l3 3v8.2H4z" stroke-width="1.2" stroke-linejoin="round" /><path d="M8 8v3.4M6.3 9.7h3.4" stroke-width="1.2" stroke-linecap="round" /></svg>
+                    Choose File…
+                  </button>
+                  <div class="np-menu-sep np-menu-sep--sources" hidden></div>
+                  <div class="np-menu-sources" data-role="sources-list"></div>
+                  <button class="np-menuitem np-menuitem--danger" data-action="clear" role="menuitem" hidden>Clear File Sources</button>
+                </div>
+              </div>
             </div>
 
-            <div class="np-input">
-              <span class="np-placeholder">Ask Pixel Pane<span class="np-caret"></span></span>
-              <span class="np-send" aria-hidden="true">
-                <svg viewBox="0 0 18 18" width="15" height="15" fill="none"><path d="M9 13.5V5m0 0L5.5 8.5M9 5l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
+            <!-- conversation (grows as it fills; scrolls past the cap) -->
+            <div class="np-transcript" id="ppTranscript" hidden></div>
+
+            <!-- composer -->
+            <div class="np-composerwrap">
+              <div class="np-composer">
+                <button class="np-iconbtn" id="ppNew" type="button" tabindex="-1" aria-label="New chat" title="New chat" disabled>
+                  <svg viewBox="0 0 18 18" width="15" height="15" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M9.6 3.4H4.8A1.6 1.6 0 0 0 3.2 5v8.2A1.6 1.6 0 0 0 4.8 14.8h8.2a1.6 1.6 0 0 0 1.6-1.6V8.4" stroke-width="1.3" stroke-linecap="round" />
+                    <path d="M12.9 2.5 15.5 5.1 10.1 10.5 7.2 10.8 7.5 7.9z" stroke-width="1.3" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <div class="np-field">
+                  <textarea class="np-textarea" id="ppInput" rows="1" placeholder="Ask Pixel Pane" aria-label="Ask Pixel Pane" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+                </div>
+                <button class="np-iconbtn np-iconbtn--send" id="ppSend" type="button" tabindex="-1" aria-label="Send" title="Send" disabled>
+                  <svg class="np-send-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 2 15 22 11 13 2 9z" /></svg>
+                  <svg class="np-stop-ico" viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.6" /></svg>
+                </button>
+              </div>
             </div>
+
+            <!-- hidden pickers powering the Sources demo -->
+            <input type="file" id="ppFileInput" multiple hidden aria-hidden="true" tabindex="-1" />
+            <input type="file" id="ppFolderInput" webkitdirectory hidden aria-hidden="true" tabindex="-1" />
           </div>
         </div>
 
@@ -298,6 +404,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=7"></script>
 </body>
 </html>
