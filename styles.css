@@ -410,10 +410,11 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   border: 1px solid rgba(243,239,230,0.09);
   overflow: hidden;
   background:
-    radial-gradient(80% 70% at 28% 122%, rgba(164,147,216,0.12), transparent 60%),
-    radial-gradient(72% 60% at 88% 128%, rgba(236,154,118,0.10), transparent 60%),
-    radial-gradient(130% 78% at 50% 46%, rgba(201,184,150,0.08), transparent 60%),
-    linear-gradient(180deg, #17171b, #0b0b0d);
+    radial-gradient(70% 55% at 20% 2%, rgba(92,112,224,0.14), transparent 60%),
+    radial-gradient(68% 62% at 90% 34%, rgba(158,98,214,0.17), transparent 60%),
+    radial-gradient(82% 74% at 54% 124%, rgba(232,154,104,0.16), transparent 62%),
+    radial-gradient(64% 58% at 6% 98%, rgba(74,182,194,0.13), transparent 60%),
+    linear-gradient(162deg, #15121f 0%, #0e0b16 52%, #0a0912 100%);
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.55),
     inset 0 1px 0 rgba(255,255,255,0.06),
@@ -435,9 +436,11 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 15px;
   font-family: var(--sans); font-size: 11.5px; font-weight: 500;
-  color: rgba(243,239,230,0.55);
-  background: #0b0b0d;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: rgba(243,239,230,0.66);
+  background: rgba(24,21,32,0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   z-index: 6;
 }
 .mb-group { display: flex; align-items: center; gap: 15px; }
