@@ -1182,6 +1182,18 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 
 @media (max-width: 620px) {
   .stage { --panel-w: min(760px, calc(100vw - 2 * var(--gutter) - 24px)); }
+  .music-window,
+  .notch-media-pill,
+  .np-media-strip,
+  .np-rail-preview {
+    display: none !important;
+  }
+  .notch.is-media-playing:not(.is-open):not(:hover) {
+    width: 180px;
+  }
+  .notch.is-media-playing:not(.is-open):not(:hover) .notch-idle {
+    opacity: 1;
+  }
   .notch.is-open, .notch:hover, .notch:focus-visible, .notch:focus-within {
     height: 132px;
   }
