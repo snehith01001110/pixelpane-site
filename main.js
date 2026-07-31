@@ -53,6 +53,15 @@
   var input       = $("#ppInput");
   var sendBtn     = $("#ppSend");
   var newBtn      = $("#ppNew");
+  var chatSurfaceBtn = $("#ppChatSurface");
+  var terminalSurfaceBtn = $("#ppTerminalSurface");
+  var chatPane    = $("#ppChatPane");
+  var terminalPane= $("#ppTerminalPane");
+  var terminalLines = $("#ppTerminalLines");
+  var terminalInput = $("#ppTerminalInput");
+  var musicWindow = document.querySelector(".music-window");
+  var musicPlay = document.getElementById("ppMusicPlay");
+  var railPreview = document.getElementById("ppRailPreview");
   var transcript  = $("#ppTranscript");
   var fileInput   = $("#ppFileInput");
   var folderInput = $("#ppFolderInput");
@@ -68,8 +77,14 @@
 
   // ── state ────────────────────────────────────────────────────────────────
   var mode = "Local";            // Local | Cloud | Custom
-  var model = "Auto";
-  var sources = [];              // [{name, dir}]
+  var model = "Qwen3.6-35B-A3B";
+  var surface = "chat";          // chat | terminal
+  var sources = [
+    { name: "pixel-pane-site", dir: true },
+    { name: "pixel-pane", dir: true },
+    { name: "Desktop", dir: true },
+    { name: "Downloads", dir: true }
+  ];
   var msgCount = 0;
   var running = false;
   var streamTimer = null;
@@ -79,6 +94,21 @@
   var loopEnabled = !reduce;
   var loopTimer = null;
   var collapseTimer = null;
+  var previewHideTimer = null;
+  var activeRailIndex = 0;
+  var mediaPlaying = false;
+
+  var chatPreviews = [
+    { title: "Update the landing demo", subtitle: "On screen", lines: [["You", "make the notch demo match the new app"], ["Pixel Pane", "I found the panel changes and mapped them into the site demo."]] },
+    { title: "Review local changes", subtitle: "12 min. ago", lines: [["You", "what changed in this branch?"], ["Pixel Pane", "Three demo files changed: markup, panel styling, and local interaction state."]] },
+    { title: "Explain captured error", subtitle: "Yesterday", lines: [["You", "what is this terminal error saying?"], ["Pixel Pane", "The local server is running, but the browser permission bridge is blocked."]] },
+    { title: "Tighten homepage copy", subtitle: "Tue", lines: [["You", "make this sound less like marketing"], ["Pixel Pane", "I kept the privacy promise and cut the softer filler around it."]] }
+  ];
+  var terminalPreviews = [
+    { title: "~/pixel-pane-site", subtitle: "Terminal · on screen", lines: [["", "nayak@Snehiths-MacBook-Pro ~/pixel-pane-site › npm run build"], ["", "✓ built static assets in 312ms"]] },
+    { title: "~", subtitle: "Terminal · idle", lines: [["", "nayak@Snehiths-MacBook-Pro ~ › ls"], ["", "Applications  Documents  Library  Pictures"]] },
+    { title: "~/Documents/pixel-pane", subtitle: "Terminal · running", lines: [["", "swift test --filter AgentModelGateway"], ["", "Testing started…"]] }
+  ];
 
   // ── inline SVGs used when swapping chip icons ──────────────────────────────
   var ICON = {
@@ -100,11 +130,12 @@
   }
   function layout() {
     if (!notch.classList.contains("is-open")) return;
+    notch.classList.toggle("is-terminal", surface === "terminal");
+    notch.classList.toggle("has-messages", surface === "chat" && msgCount > 0);
     var max = stageMax();
-    // Leave room for the chrome (chip row + composer + paddings) so the
-    // transcript scrolls rather than pushing the panel past the stage.
-    transcript.style.maxHeight = Math.max(80, max - 134) + "px";
-    var target = Math.min(max, Math.max(120, panel.scrollHeight));
+    var preferred = surface === "terminal" ? 160 : (msgCount > 0 ? 270 : 100);
+    transcript.style.maxHeight = Math.max(80, Math.min(150, max - 120)) + "px";
+    var target = Math.min(max, preferred);
     notch.style.height = target + "px";
   }
   function openPanel(focusInput) {
@@ -115,12 +146,18 @@
       requestAnimationFrame(function () { try { input.focus(); } catch (e) {} });
     }
   }
-  function pinned() { return running || hovering || isFocused || menuOpenName() != null; }
+  function pinned() { return running || hovering || menuOpenName() != null; }
   function collapse() {
     if (running) return;
+    hideRailPreviewSoon();
     closeAllMenus();
+    if (notch.contains(document.activeElement)) {
+      try { document.activeElement.blur(); } catch (e) {}
+    }
     if (isFocused) { input.blur(); isFocused = false; }
     notch.classList.remove("is-open");
+    notch.classList.remove("is-terminal");
+    notch.classList.remove("has-messages");
     notch.style.height = "";
   }
   function scheduleCollapse() {
@@ -138,6 +175,147 @@
   }
   function scrollTranscript() {
     transcript.scrollTop = transcript.scrollHeight;
+  }
+
+  function previewData(index) {
+    var list = surface === "terminal" ? terminalPreviews : chatPreviews;
+    return list[index % list.length];
+  }
+
+  function showRailPreview(dot, index) {
+    if (!railPreview) return;
+    if (previewHideTimer) { clearTimeout(previewHideTimer); previewHideTimer = null; }
+    var data = previewData(index);
+    railPreview.querySelector('[data-role="preview-title"]').textContent = data.title;
+    railPreview.querySelector('[data-role="preview-subtitle"]').textContent = data.subtitle;
+    var body = railPreview.querySelector('[data-role="preview-body"]');
+    body.classList.toggle("is-terminal", surface === "terminal");
+    body.innerHTML = data.lines.map(function (line) {
+      return '<div class="np-preview-line">' +
+        '<span class="np-preview-speaker">' + escapeHtml(line[0]) + '</span>' +
+        '<span class="np-preview-text">' + escapeHtml(line[1]) + '</span>' +
+        '</div>';
+    }).join("");
+
+    railPreview.hidden = false;
+    var stage = notch.parentElement;
+    var dotRect = dot.getBoundingClientRect();
+    var stageRect = stage.getBoundingClientRect();
+    var panelRect = notch.getBoundingClientRect();
+    var width = railPreview.offsetWidth || 280;
+    var left = panelRect.left - stageRect.left - width - 12;
+    left = Math.min(left, stageRect.width - width - 12);
+    left = Math.max(24, left);
+    var top = dotRect.top - stageRect.top - 22;
+    top = Math.max(12, Math.min(top, stageRect.height - railPreview.offsetHeight - 12));
+    railPreview.style.left = left + "px";
+    railPreview.style.top = top + "px";
+    void railPreview.offsetWidth;
+    railPreview.classList.add("is-visible");
+  }
+
+  function hideRailPreviewSoon() {
+    if (!railPreview) return;
+    if (previewHideTimer) clearTimeout(previewHideTimer);
+    previewHideTimer = setTimeout(function () {
+      railPreview.classList.remove("is-visible");
+      setTimeout(function () {
+        if (!railPreview.classList.contains("is-visible")) railPreview.hidden = true;
+      }, 150);
+    }, 140);
+  }
+
+  function setActiveRailDot(index) {
+    activeRailIndex = index;
+    panel.querySelectorAll(".np-rail-dot").forEach(function (dot, i) {
+      dot.classList.toggle("is-active", i === index);
+    });
+  }
+
+  function loadRailEntry(index) {
+    setActiveRailDot(index);
+    if (surface === "terminal") {
+      var data = previewData(index);
+      var command = (data.lines[0] && data.lines[0][1]) || "ls";
+      var output = (data.lines[1] && data.lines[1][1]) || "";
+      terminalLines.innerHTML =
+        '<div>' + escapeHtml(command) + '</div>' +
+        '<div>' + escapeHtml(output) + '</div>' +
+        terminalPromptHTML();
+      terminalInput = $("#ppTerminalInput");
+      bindTerminalInput();
+      focusTerminalSoon();
+    } else {
+      var chat = previewData(index);
+      transcript.innerHTML =
+        '<div class="np-turn">' +
+          '<div class="np-q">' + escapeHtml(chat.lines[0][1]) + '</div>' +
+          '<div class="np-a">' +
+            '<div class="np-a-meta">Pixel Pane</div>' +
+            '<div class="np-a-text">' + escapeHtml(chat.lines[1][1]) + '</div>' +
+          '</div>' +
+        '</div>';
+      transcript.hidden = false;
+      msgCount = 1;
+      updateChat();
+      openPanel(false);
+    }
+  }
+
+  function terminalPromptHTML() {
+    return '<div class="term-input-row"><span class="term-user">nayak@Snehiths-MacBook-Pro</span> <span class="term-path">~</span> <span class="term-prompt">›</span> <span class="term-input" id="ppTerminalInput" role="textbox" aria-label="Terminal command" contenteditable="plaintext-only" spellcheck="false"></span><span class="term-caret"></span></div>';
+  }
+
+  function focusTerminalSoon() {
+    if (!terminalInput || isTouch()) return;
+    requestAnimationFrame(function () {
+      try { terminalInput.focus(); } catch (e) {}
+    });
+  }
+
+  function runTerminalCommand() {
+    if (!terminalInput) return;
+    var command = terminalInput.textContent.trim();
+    if (!command) return;
+    var output = command === "clear" ? "" :
+      command === "pwd" ? "/Users/nayak" :
+      command === "ls" ? "Applications  Documents  Library  output.txt" :
+      "you have to download the app for that";
+    var next = terminalLines.innerHTML.replace(/<div class="term-input-row">[\s\S]*$/, "");
+    if (command === "clear") {
+      terminalLines.innerHTML = terminalPromptHTML();
+    } else {
+      terminalLines.innerHTML = next +
+        '<div><span class="term-user">nayak@Snehiths-MacBook-Pro</span> <span class="term-path">~</span> <span class="term-prompt">›</span> ' + escapeHtml(command) + '</div>' +
+        '<div>' + escapeHtml(output) + '</div>' +
+        terminalPromptHTML();
+    }
+    terminalInput = $("#ppTerminalInput");
+    bindTerminalInput();
+    focusTerminalSoon();
+  }
+
+  function bindTerminalInput() {
+    if (!terminalInput || terminalInput.dataset.bound === "true") return;
+    terminalInput.dataset.bound = "true";
+    terminalInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runTerminalCommand();
+      } else if (e.key === "Escape") {
+        terminalInput.blur();
+      }
+    });
+  }
+
+  function setMediaPlaying(on) {
+    mediaPlaying = on;
+    notch.classList.toggle("is-media-playing", on);
+    if (musicWindow) musicWindow.classList.toggle("is-playing", on);
+    if (musicPlay) {
+      musicPlay.setAttribute("aria-pressed", on ? "true" : "false");
+      musicPlay.setAttribute("aria-label", on ? "Pause music" : "Play music");
+    }
   }
 
   // ── the chat ───────────────────────────────────────────────────────────────
@@ -272,6 +450,23 @@
     updateSendState();
     var has = msgCount > 0;
     newBtn.disabled = !has || running;
+    notch.classList.toggle("has-messages", surface === "chat" && has);
+  }
+
+  function setSurface(next, shouldOpen) {
+    surface = next;
+    var terminal = surface === "terminal";
+    chatPane.hidden = terminal;
+    terminalPane.hidden = !terminal;
+    chatSurfaceBtn.classList.toggle("is-active", !terminal);
+    terminalSurfaceBtn.classList.toggle("is-active", terminal);
+    notch.classList.toggle("is-terminal", terminal);
+    notch.classList.toggle("has-messages", !terminal && msgCount > 0);
+    closeAllMenus();
+    stopLoop();
+    if (shouldOpen) openPanel(!terminal);
+    else layout();
+    if (terminal && shouldOpen) focusTerminalSoon();
   }
 
   // ── composer ────────────────────────────────────────────────────────────────
@@ -289,6 +484,37 @@
   input.addEventListener("blur", function () { isFocused = false; });
   sendBtn.addEventListener("click", function () { running ? cancelStream() : send(); });
   newBtn.addEventListener("click", newChat);
+  chatSurfaceBtn.addEventListener("click", function (e) { e.stopPropagation(); setSurface("chat", true); });
+  terminalSurfaceBtn.addEventListener("click", function (e) { e.stopPropagation(); setSurface("terminal", true); });
+  terminalPane.addEventListener("click", function (e) {
+    e.stopPropagation();
+    openPanel(false);
+    focusTerminalSoon();
+  });
+  if (musicPlay) {
+    musicPlay.addEventListener("click", function (e) {
+      e.stopPropagation();
+      stopLoop();
+      setMediaPlaying(!mediaPlaying);
+    });
+  }
+  panel.querySelectorAll(".np-rail-dot").forEach(function (dot, index) {
+    dot.addEventListener("mouseenter", function () {
+      stopLoop();
+      openPanel(false);
+      showRailPreview(dot, index);
+    });
+    dot.addEventListener("mouseleave", hideRailPreviewSoon);
+    dot.addEventListener("click", function (e) {
+      e.stopPropagation();
+      stopLoop();
+      openPanel(false);
+      loadRailEntry(index);
+      showRailPreview(dot, index);
+    });
+    dot.addEventListener("focus", function () { showRailPreview(dot, index); });
+    dot.addEventListener("blur", hideRailPreviewSoon);
+  });
 
   // ── dropdown menus (moved to <body> so the notch clip can't cut them) ────────
   var menus = {};   // name -> { wrap, chip, menu }
@@ -445,7 +671,7 @@
   });
 
   notch.addEventListener("click", function (e) {
-    if (e.target.closest(".np-chip, .np-menu, .np-iconbtn, .np-src-remove")) return;
+    if (e.target.closest(".np-chip, .np-menu, .np-iconbtn, .np-src-remove, .np-surface-toggle, .np-terminal-folder, .np-terminal-surface, .np-rail-dot")) return;
     openPanel(true);
   });
   notch.addEventListener("keydown", function (e) {
@@ -469,16 +695,14 @@
   window.addEventListener("resize", function () { closeAllMenus(); layout(); });
   window.addEventListener("scroll", function () { closeAllMenus(); }, { passive: true });
 
-  // Cursor only: the panel opens on hover (desktop) or tap (touch) — never on a
-  // timer. Touch devices can't hover, so nudge them to tap instead of "hover".
-  if (isTouch()) {
-    var hintEl = document.querySelector(".stage-hint");
-    if (hintEl) hintEl.textContent = "tap the notch ↑";
-  }
-
   // initial paint
   updateChat();
   setMode("Local");
+  renderSources();
+  setSurface("chat", false);
+  bindTerminalInput();
+  setActiveRailDot(0);
+  setMediaPlaying(false);
 })();
 
 function escapeHtml(s) {
