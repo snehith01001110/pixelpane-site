@@ -190,6 +190,24 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 .btn--ghost:hover { border-color: rgba(245,245,247,0.42); background: rgba(245,245,247,0.07); }
 .btn--lg { padding: 17px 34px; font-size: 14px; }
+/* Download + Buy sit side by side, stacking on narrow screens rather than
+   letting the two long labels overflow the card. */
+.access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+.btn-was {
+  opacity: 0.55;
+  margin-left: 7px;
+  text-decoration-thickness: 1px;
+}
+@media (max-width: 560px) {
+  .access-actions { flex-direction: column; align-items: stretch; }
+  .access-actions .btn { width: 100%; }
+}
 
 /* ════════════════════════════ HERO ════════════════════════ */
 .hero {
