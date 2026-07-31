@@ -763,7 +763,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 
 .notch {
   width: 180px;
-  height: 32px;
+  height: 30px;
 }
 .notch.is-media-playing:not(.is-open):not(:hover) {
   width: 248px;
@@ -1105,7 +1105,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   color: rgba(242,235,217,0.78);
 }
 .np-q {
-  align-self: flex-start;
+  align-self: flex-end;
   max-width: 88%;
   padding: 0;
   border: 0;
@@ -1113,6 +1113,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   background: transparent;
   font-family: var(--mono);
   font-size: 12px;
+  text-align: right;
 }
 .np-a-text, .np-a-meta, .np-thinking {
   font-family: var(--mono);
