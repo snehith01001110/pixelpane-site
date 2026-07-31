@@ -116,12 +116,6 @@ em { font-style: italic; }
   align-items: center;
   gap: 10px;
 }
-.eyebrow-dot {
-  width: 6px; height: 6px;
-  background: linear-gradient(135deg, var(--c-amber), var(--c-coral));
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(236,154,118,0.12), 0 0 10px rgba(233,183,105,0.55);
-}
 
 /* ── header ────────────────────────────────────────────────── */
 .site-header {
@@ -229,10 +223,6 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   margin: 0 auto 26px;
 }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
-
-.hero .eyebrow {
-  justify-content: center;
-}
 
 
 /* ════════════════════════ HOW IT WORKS ════════════════════ */
