@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pixel Pane — A local-first assistant that lives in your notch</title>
-  <meta name="description" content="Pixel Pane is a local-first, notch-native AI assistant for macOS. Local by default, cloud by choice, with explicit file grants and confirmation before anything happens on your machine." />
+  <title>Pixel Pane — A command center in your Mac notch</title>
+  <meta name="description" content="Pixel Pane puts chat, terminal, files, models, sessions, and media in one Mac-native notch surface. Local by default, cloud by choice, and only active when you ask." />
 
   <meta property="og:title" content="Pixel Pane" />
-  <meta property="og:description" content="A local-first, notch-native assistant for macOS. Local by default. Cloud by choice." />
+  <meta property="og:description" content="Chat, terminal, files, models, sessions, and media in your Mac notch." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://pixelpane.app/" />
   <meta property="og:image" content="https://pixelpane.app/assets/og.png?v=2" />
@@ -15,7 +15,7 @@
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Pixel Pane" />
-  <meta name="twitter:description" content="A local-first, notch-native assistant for macOS. Local by default. Cloud by choice." />
+  <meta name="twitter:description" content="Chat, terminal, files, models, sessions, and media in your Mac notch." />
   <meta name="twitter:image" content="https://pixelpane.app/assets/og.png?v=2" />
 
   <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml" />
@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=24" />
 </head>
 <body>
   <!-- structural frame lines -->
@@ -39,12 +39,9 @@
           <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896" />
         </svg>
       </span>
-      <span class="wordmark-text">Pixel&nbsp;Pane</span>
     </a>
     <nav class="site-nav" aria-label="Primary">
       <a href="#demo">Demo</a>
-      <a href="#how">How&nbsp;it&nbsp;works</a>
-      <a href="#principles">Privacy</a>
       <a href="https://github.com/snehith01001110/pixelpane" class="nav-github" target="_blank" rel="noopener" aria-label="GitHub repository">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.936.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
       </a>
@@ -56,33 +53,23 @@
     <!-- ───────────────────────── HERO ───────────────────────── -->
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-dot"></span>macOS · Free download</p>
+        <p class="eyebrow"><span class="eyebrow-dot"></span>Mac app</p>
         <h1 class="hero-title">
-          The assistant that<br />
-          stays <em>on your machine.</em>
+          Pixel Pane
         </h1>
         <p class="hero-sub">
-          Pixel&nbsp;Pane lives in the notch. It sees what you point it at, reasons
-          locally by default, and never touches a file or runs a command without
-          your word.
+          An AI command bar for your Mac notch.
         </p>
         <div class="hero-actions">
           <a class="btn btn--primary" href="https://github.com/snehith01001110/pixelpane-releases/releases/latest/download/PixelPane.dmg">Download for macOS</a>
-          <a class="btn btn--ghost" href="#how">See how it works</a>
+          <a class="btn btn--ghost" href="#demo">Try the demo</a>
         </div>
       </div>
 
     </section>
 
-    <hr class="rule" aria-hidden="true" />
-
     <!-- ───────────────────────── DEMO ───────────────────────── -->
     <section class="demo" id="demo">
-      <div class="section-head">
-        <p class="eyebrow">The interaction</p>
-        <h2 class="section-title">It lives in the notch.</h2>
-      </div>
-
       <div class="stage">
         <div class="menubar" aria-hidden="true">
           <span class="mb-group">
@@ -102,8 +89,23 @@
             <span class="dw-title">demo</span>
           </div>
           <div class="dw-body">
-            <p class="dw-text">demo me by hovering over the notch</p>
+            <p class="dw-text">chat, terminal, files, and music live above this</p>
           </div>
+        </div>
+
+        <div class="music-window" aria-label="Music player demo">
+          <div class="music-art" aria-hidden="true">
+            <span class="music-art-moon"></span>
+          </div>
+          <div class="music-copy">
+            <span class="music-title">Quiet Machine</span>
+            <span class="music-artist">Pixel Pane Radio</span>
+            <span class="music-progress" aria-hidden="true"><i></i></span>
+          </div>
+          <button class="music-play" id="ppMusicPlay" type="button" aria-label="Play music" aria-pressed="false">
+            <svg class="music-play-ico" viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M5 3.4v9.2L12.3 8z" /></svg>
+            <svg class="music-pause-ico" viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M4.6 3.5h2.4v9H4.6zM9 3.5h2.4v9H9z" /></svg>
+          </button>
         </div>
 
         <!-- macOS dock -->
@@ -129,10 +131,43 @@
         <div class="notch" id="ppNotch" tabindex="0" role="button" aria-label="Expand the Pixel Pane window">
           <!-- collapsed state: just a plain black sliver, like the real notch -->
           <span class="notch-idle"></span>
+          <div class="notch-media-pill" aria-hidden="true">
+            <span class="media-art"><span></span></span>
+            <span class="media-wave"><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
 
           <!-- expanded state: the Pixel Pane assistant panel (matches the v1.1 release) -->
           <div class="notch-panel" id="ppPanel">
-            <!-- chip row: model  |  mode · sources -->
+            <div class="np-media-strip" aria-hidden="true">
+              <span class="media-art"><span></span></span>
+              <span class="media-wave"><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+
+            <div class="np-surface-toggle" role="group" aria-label="Surface">
+              <button class="np-surface-btn is-active" id="ppChatSurface" type="button" tabindex="-1" aria-label="Chat">
+                <span class="np-moon-mini"></span>
+              </button>
+              <button class="np-surface-btn" id="ppTerminalSurface" type="button" tabindex="-1" aria-label="Terminal">
+                <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" aria-hidden="true">
+                  <rect x="2.7" y="3.4" width="10.6" height="8.2" rx="1.4" stroke-width="1.2" />
+                  <path d="m5.2 6.1 1.8 1.6-1.8 1.6M8.4 9.4h2.2" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="np-rail" aria-hidden="true">
+              <button class="np-rail-plus" type="button" tabindex="-1">+</button>
+              <span class="np-rail-dot is-active"></span>
+              <span class="np-rail-dot np-rail-dot--green"></span>
+              <span class="np-rail-dot np-rail-dot--red"></span>
+              <span class="np-rail-dot np-rail-dot--olive"></span>
+              <span class="np-rail-dot np-rail-dot--rose"></span>
+              <span class="np-rail-dot np-rail-dot--sage"></span>
+              <span class="np-rail-dot np-rail-dot--gold"></span>
+              <span class="np-rail-dot np-rail-dot--teal"></span>
+            </div>
+
+            <!-- top overlay: surface toggle · model ... mode · sources -->
             <div class="np-chiprow">
               <div class="np-menu-wrap" data-menu="model">
                 <button class="np-chip np-chip--model" id="ppModelChip" type="button" tabindex="-1" aria-haspopup="true" aria-expanded="false">
@@ -141,7 +176,7 @@
                     <rect x="6.8" y="6.8" width="2.4" height="2.4" rx="0.6" fill="currentColor" stroke="none" />
                     <g stroke-width="1.1" stroke-linecap="round"><path d="M6.4 4.7V2.9M9.6 4.7V2.9M6.4 13.1v-1.8M9.6 13.1v-1.8M4.7 6.4H2.9M4.7 9.6H2.9M13.1 6.4h-1.8M13.1 9.6h-1.8" /></g>
                   </svg>
-                  <span class="np-chip-value" data-role="model-label">Auto</span>
+                  <span class="np-chip-value" data-role="model-label">Qwen3.6-35B-A3B</span>
                   <svg class="np-chev" viewBox="0 0 12 12" width="7" height="7" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2.6 4.6 6 8l3.4-3.4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </button>
                 <div class="np-menu" role="menu" hidden>
@@ -190,7 +225,7 @@
                       <path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round" />
                     </svg>
                   </span>
-                  <span class="np-chip-value np-chip-label" data-role="sources-label">No&nbsp;Sources</span>
+                  <span class="np-chip-value np-chip-label" data-role="sources-label">4&nbsp;Sources</span>
                   <svg class="np-chev" viewBox="0 0 12 12" width="7" height="7" fill="none" stroke="currentColor" aria-hidden="true"><path d="M2.6 4.6 6 8l3.4-3.4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </button>
                 <div class="np-menu" role="menu" hidden>
@@ -209,11 +244,11 @@
               </div>
             </div>
 
-            <!-- conversation (grows as it fills; scrolls past the cap) -->
-            <div class="np-transcript" id="ppTranscript" hidden></div>
+            <div class="np-chat-surface" id="ppChatPane">
+              <!-- conversation (grows as it fills; scrolls past the cap) -->
+              <div class="np-transcript" id="ppTranscript" hidden></div>
 
-            <!-- composer -->
-            <div class="np-composerwrap">
+              <!-- composer -->
               <div class="np-composer">
                 <button class="np-iconbtn" id="ppNew" type="button" tabindex="-1" aria-label="New chat" title="New chat" disabled>
                   <svg viewBox="0 0 18 18" width="15" height="15" fill="none" stroke="currentColor" aria-hidden="true">
@@ -231,134 +266,56 @@
               </div>
             </div>
 
+            <div class="np-terminal-surface" id="ppTerminalPane" hidden>
+              <div class="np-terminal-lines" id="ppTerminalLines">
+                <div><span class="term-user">nayak@Snehiths-MacBook-Pro</span> <span class="term-path">~</span> <span class="term-prompt">›</span> ls</div>
+                <div class="term-grid"><span>Applications</span><span>Documents</span><span>Library</span><span>output.txt</span></div>
+                <div class="term-grid"><span>Calibre Library</span><span>Downloads</span><span>Movies</span><span>Pictures</span></div>
+                <div class="term-grid"><span>Desktop</span><span>finbonacci 50.txt</span><span>Music</span><span>Public</span></div>
+                <div class="term-input-row"><span class="term-user">nayak@Snehiths-MacBook-Pro</span> <span class="term-path">~</span> <span class="term-prompt">›</span> <span class="term-input" id="ppTerminalInput" role="textbox" aria-label="Terminal command" contenteditable="plaintext-only" spellcheck="false"></span><span class="term-caret"></span></div>
+              </div>
+              <button class="np-terminal-folder" type="button" tabindex="-1" aria-label="Terminal folder">
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M2 5.4h4l1.3 1.6H14v6.2H2z" stroke-width="1.2" stroke-linejoin="round" />
+                </svg>
+                nayak
+              </button>
+            </div>
+
             <!-- hidden pickers powering the Sources demo -->
             <input type="file" id="ppFileInput" multiple hidden aria-hidden="true" tabindex="-1" />
             <input type="file" id="ppFolderInput" webkitdirectory hidden aria-hidden="true" tabindex="-1" />
           </div>
         </div>
 
-        <p class="stage-hint">hover the notch ↑</p>
-      </div>
-    </section>
-
-    <hr class="rule" aria-hidden="true" />
-
-    <!-- ─────────────────────── HOW IT WORKS ─────────────────────── -->
-    <section class="how" id="how">
-      <div class="section-head">
-        <p class="eyebrow">How it works</p>
-        <h2 class="section-title">Three steps. No surprises.</h2>
-        <p class="section-lede">
-          Every run is a deliberate loop: you grant context, the model proposes,
-          and the app executes only what you confirm. State is durable, so
-          nothing happens twice and nothing happens silently.
-        </p>
-      </div>
-
-      <ol class="steps">
-        <li class="step">
-          <span class="step-index">01</span>
-          <span class="step-icon" aria-hidden="true">
-            <svg class="line-art" viewBox="0 0 120 120" fill="none">
-              <rect class="draw" pathLength="1" x="26" y="26" width="68" height="50" rx="4"
-                    stroke="#c9b896" stroke-width="1.4" stroke-dasharray="5 6" />
-              <path class="draw" pathLength="1" d="M26 40 v-14 h14" stroke="#f3efe6" stroke-width="1.6" />
-              <path class="draw" pathLength="1" d="M94 62 v14 h-14" stroke="#f3efe6" stroke-width="1.6" />
-              <line class="draw" pathLength="1" x1="40" y1="92" x2="80" y2="92" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
-            </svg>
-          </span>
-          <h3 class="step-title">Capture</h3>
-          <p class="step-body">
-            Point at a region of the screen, an image, or a folder you've granted.
-            OCR and pixels stay transient — they're context, not a recording.
-          </p>
-        </li>
-
-        <li class="step">
-          <span class="step-index">02</span>
-          <span class="step-icon" aria-hidden="true">
-            <svg class="line-art" viewBox="0 0 120 120" fill="none">
-              <circle class="draw" pathLength="1" cx="60" cy="60" r="14" stroke="#f3efe6" stroke-width="1.5" />
-              <line class="draw" pathLength="1" x1="60" y1="32" x2="60" y2="18" stroke="#c9b896" stroke-width="1.4" />
-              <line class="draw" pathLength="1" x1="60" y1="88" x2="60" y2="102" stroke="#c9b896" stroke-width="1.4" />
-              <line class="draw" pathLength="1" x1="32" y1="60" x2="18" y2="60" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
-              <line class="draw" pathLength="1" x1="88" y1="60" x2="102" y2="60" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
-              <line class="draw" pathLength="1" x1="40" y1="40" x2="28" y2="28" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
-              <line class="draw" pathLength="1" x1="80" y1="80" x2="92" y2="92" stroke="rgba(243,239,230,0.30)" stroke-width="1.4" />
-            </svg>
-          </span>
-          <h3 class="step-title">Reason</h3>
-          <p class="step-body">
-            A local model answers by default. Switch to cloud explicitly when you
-            want it — either way, the Mac app owns grants, evidence, and policy.
-          </p>
-        </li>
-
-        <li class="step">
-          <span class="step-index">03</span>
-          <span class="step-icon" aria-hidden="true">
-            <svg class="line-art" viewBox="0 0 120 120" fill="none">
-              <rect class="draw" pathLength="1" x="24" y="30" width="72" height="60" rx="8"
-                    stroke="#f3efe6" stroke-width="1.5" />
-              <path class="draw" pathLength="1" d="M44 60 l11 12 22 -24" stroke="#c9b896" stroke-width="2" />
-            </svg>
-          </span>
-          <h3 class="step-title">Confirm</h3>
-          <p class="step-body">
-            File writes, commands, and installs surface as drafts you approve.
-            Approved work runs exactly once, from an immutable record.
-          </p>
-        </li>
-      </ol>
-    </section>
-
-    <hr class="rule" aria-hidden="true" />
-
-    <!-- ─────────────────────── PRINCIPLES ─────────────────────── -->
-    <section class="principles" id="principles">
-      <div class="principles-grid">
-        <div class="principles-statement">
-          <p class="eyebrow">What it refuses to do</p>
-          <h2 class="section-title">
-            Built so trust is the<br />default, not a setting.
-          </h2>
-          <p class="section-lede">
-            The boundaries are wired into the app.
-          </p>
-          <a class="btn btn--ghost" href="https://github.com/snehith01001110/pixelpane-releases/releases/latest/download/PixelPane.dmg">Download for macOS</a>
+        <div class="np-rail-preview" id="ppRailPreview" hidden aria-hidden="true">
+          <div class="np-preview-head">
+            <div>
+              <div class="np-preview-title" data-role="preview-title"></div>
+              <div class="np-preview-subtitle" data-role="preview-subtitle"></div>
+            </div>
+            <button class="np-preview-close" type="button" tabindex="-1" aria-label="Close preview">
+              <svg viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 4l6 6M10 4l-6 6" stroke-width="1.4" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
+          <div class="np-preview-body" data-role="preview-body"></div>
         </div>
-
-        <ul class="principles-list">
-          <li class="principle">
-            <span class="principle-no" aria-hidden="true">No</span>
-            <div>
-              <h3>continuous recording</h3>
-              <p>It looks only when you ask it to. There is no always-on screen capture.</p>
-            </div>
-          </li>
-          <li class="principle">
-            <span class="principle-no" aria-hidden="true">No</span>
-            <div>
-              <h3>silent file access</h3>
-              <p>Your explicit grants are the only doorway to local files and folders.</p>
-            </div>
-          </li>
-          <li class="principle">
-            <span class="principle-no" aria-hidden="true">No</span>
-            <div>
-              <h3>hidden memory</h3>
-              <p>New chats start blank. Nothing carries across sessions behind your back.</p>
-            </div>
-          </li>
-          <li class="principle">
-            <span class="principle-no" aria-hidden="true">No</span>
-            <div>
-              <h3>unconfirmed side effects</h3>
-              <p>Risky commands and writes are denied or held until you approve them.</p>
-            </div>
-          </li>
-        </ul>
       </div>
+    </section>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <!-- ─────────────────────── FEATURES ─────────────────────── -->
+    <section class="features" id="how">
+      <ul class="feature-strip" aria-label="Pixel Pane features">
+        <li><strong>Chat</strong><span>Ask from anywhere.</span></li>
+        <li><strong>Terminal</strong><span>Use a real shell.</span></li>
+        <li><strong>Files</strong><span>Grant sources explicitly.</span></li>
+        <li><strong>Models</strong><span>Local, Cloud, Custom.</span></li>
+        <li><strong>Media</strong><span>Now playing in the notch.</span></li>
+      </ul>
     </section>
 
     <hr class="rule" aria-hidden="true" />
@@ -376,9 +333,9 @@
           </svg>
         </div>
         <p class="eyebrow">Download</p>
-        <h2 class="access-title">Put it in your notch.</h2>
+        <h2 class="access-title">Make the notch useful.</h2>
         <p class="access-sub">
-          Free download and updates.
+          Free download and updates for macOS.
         </p>
         <a class="btn btn--primary btn--lg" href="https://github.com/snehith01001110/pixelpane-releases/releases/latest/download/PixelPane.dmg">Download Pixel&nbsp;Pane</a>
         <p class="access-fineprint">
@@ -399,11 +356,11 @@
         </svg>
         Pixel Pane
       </span>
-      <span class="footer-note">Local-first assistant for macOS · Free download</span>
+      <span class="footer-note">Mac command center in your notch · Free download</span>
       <span class="footer-year">© 2026</span>
     </div>
   </footer>
 
-  <script src="main.js?v=7"></script>
+  <script src="main.js?v=9"></script>
 </body>
 </html>
