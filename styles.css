@@ -153,9 +153,8 @@ em { font-style: italic; }
   transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
 }
 .nav-cta:hover { border-color: rgba(245,245,247,0.42); background: rgba(245,245,247,0.08); }
-.nav-github { display: inline-flex; align-items: center; }
 @media (max-width: 600px) {
-  .site-nav a:not(.nav-cta):not(.nav-github) { display: none; }
+  .site-nav a:not(.nav-cta) { display: none; }
 }
 
 /* ── buttons ───────────────────────────────────────────────── */
