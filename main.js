@@ -711,6 +711,24 @@ function escapeHtml(s) {
   });
 }
 
+/* Version badge — pulls the latest tag from the releases repo so the
+   footer doesn't go stale after a release. Leaves the baked-in text alone
+   on any failure (offline, rate-limited, etc). */
+(function () {
+  "use strict";
+
+  var el = document.getElementById("ppVersion");
+  if (!el || !window.fetch) return;
+
+  fetch("https://api.github.com/repos/snehith01001110/pixelpane-releases/releases/latest")
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      if (!data || !data.tag_name) return;
+      el.textContent = "v" + data.tag_name.replace(/^v/i, "");
+    })
+    .catch(function () {});
+})();
+
 /* Copy the contact email to the clipboard instead of opening a mail client. */
 (function () {
   "use strict";
