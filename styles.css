@@ -8,6 +8,18 @@
 :root {
   --ink:          #07070a;   /* page background — the aurora's floor */
   --ink-raised:   #0b0b0d;   /* faint raised surfaces      */
+
+  /* The colour the page hands off to the browser's own chrome — iOS status
+     bar and toolbar, Android address bar, overscroll gutters. Browsers paint
+     those from theme-color (or from the html background colour), never from
+     the fixed aurora, so the flat --ink used to read as hard black bars
+     against a page whose real edges sit around #141416–#22252d. This tone
+     splits that range; the edge fade below pulls the page's own top and
+     bottom to meet it. Keep in sync with the theme-color meta in index.html. */
+  --edge:         #15161c;
+  --edge-clear:   rgba(21, 22, 28, 0);  /* --edge at zero alpha */
+  --edge-fade-t:  72px;
+  --edge-fade-b:  104px;
   --paper:        #f5f5f7;   /* primary text               */
   --beige:        #d7c7a1;   /* quiet product accent       */
   --beige-deep:   #b9a77d;
@@ -35,17 +47,28 @@
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --maxw: 1160px;
-  --gutter: clamp(20px, 5vw, 64px);
+  /* max() with the safe-area insets so a landscape notch or rounded corner
+     never eats into the gutter. Both env() calls carry a 0px fallback so the
+     whole declaration stays valid where env() is unknown. */
+  --gutter: max(clamp(20px, 5vw, 64px),
+                env(safe-area-inset-left, 0px),
+                env(safe-area-inset-right, 0px));
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Rubber-band overscroll and any chrome that samples the document colour
+     land on --edge rather than on the aurora's near-black floor. */
+  background: var(--edge);
+  color-scheme: dark;
+}
 
 body {
   margin: 0;
-  background: var(--ink);
+  background: var(--edge);
   color: var(--paper);
   font-family: var(--sans);
   font-size: 17px;
@@ -103,8 +126,26 @@ body::after {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image: url("assets/grain.png?v=1");
-  background-size: 160px 160px;
+  /* Two edge fades ride in the same layer as the grain, above the aurora but
+     below content, so the page's top and bottom settle onto --edge — the same
+     colour the browser paints its status bar and toolbar with. Without them
+     the aurora ran bright right up to the last pixel and the chrome met it
+     with a hard line. Listed before the grain so the outermost pixels are
+     exactly --edge, speckle-free, and so match the chrome exactly. */
+  background-image:
+    linear-gradient(to bottom, var(--edge), var(--edge-clear) var(--edge-fade-t)),
+    linear-gradient(to top,    var(--edge), var(--edge-clear) var(--edge-fade-b)),
+    url("assets/grain.png?v=1");
+  background-size: 100% 100%, 100% 100%, 160px 160px;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+/* Phone chrome takes a bigger bite than desktop, so give it a longer runway. */
+@media (max-width: 720px) {
+  :root {
+    --edge-fade-t: 108px;
+    --edge-fade-b: 148px;
+  }
 }
 
 ::selection {
@@ -173,8 +214,11 @@ em { font-style: italic; }
   align-items: center;
   justify-content: space-between;
   max-width: none;
-  padding-inline: clamp(18px, 3vw, 40px);
-  padding-top: 18px;
+  padding-inline: max(clamp(18px, 3vw, 40px),
+                      env(safe-area-inset-left, 0px),
+                      env(safe-area-inset-right, 0px));
+  /* viewport-fit=cover lets the page run under the notch/status bar; clear it. */
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
   padding-bottom: 18px;
 }
 .wordmark { display: flex; align-items: center; gap: 0; }
@@ -595,7 +639,8 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   justify-content: space-between;
   gap: 16px;
   padding-top: 30px;
-  padding-bottom: 30px;
+  /* Keeps the last line clear of the home indicator / bottom toolbar. */
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
   flex-wrap: wrap;
 }
 .footer-mark { display: inline-flex; align-items: center; gap: 10px;

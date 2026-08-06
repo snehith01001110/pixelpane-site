@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- The browser paints its own chrome (iOS status bar, Android address bar,
+       overscroll gutters) with this colour, not with the aurora. Keep it in
+       sync with --edge in styles.css, which fades the page's top and bottom
+       edges to the same value so the seam disappears. -->
+  <meta name="theme-color" content="#15161c" />
+  <meta name="color-scheme" content="dark" />
   <title>Pixel Pane</title>
   <meta name="description" content="Pixel Pane puts chat, terminal, files, models, sessions, and media in one Mac-native notch surface. Local by default, cloud by choice, and only active when you ask." />
 
@@ -23,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=36" />
+  <link rel="stylesheet" href="styles.css?v=37" />
   <!-- Set before first paint so the hero title starts hidden and animates in,
        rather than flashing at full opacity while main.js is still loading. -->
   <script>document.documentElement.classList.add("js");</script>
