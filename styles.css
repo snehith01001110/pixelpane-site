@@ -1,11 +1,12 @@
 /* ============================================================
    Pixel Pane — site styles
-   Palette: black glass, Apple-like off-white, quiet warm accent.
+   Palette: a grainy aurora over near-black, frosted glass panels,
+   Apple-like off-white type, quiet warm accent.
    Type: system display/body · JetBrains Mono (micro-labels).
    ============================================================ */
 
 :root {
-  --ink:          #000000;   /* page background            */
+  --ink:          #07070a;   /* page background — the aurora's floor */
   --ink-raised:   #0b0b0d;   /* faint raised surfaces      */
   --paper:        #f5f5f7;   /* primary text               */
   --beige:        #d7c7a1;   /* quiet product accent       */
@@ -14,6 +15,11 @@
   --faint:        rgba(245, 245, 247, 0.38);
   --line:         rgba(245, 245, 247, 0.10);
   --line-strong:  rgba(245, 245, 247, 0.24);
+
+  /* frosted panels floating on the aurora */
+  --glass:        rgba(255, 255, 255, 0.045);
+  --glass-edge:   rgba(255, 255, 255, 0.10);
+  --lift:         0 34px 80px -50px rgba(0, 0, 0, 0.9);
 
   /* friendly warm accent set — used sparingly alongside the beige */
   --c-amber:      #e9b769;
@@ -51,15 +57,59 @@ body {
   overflow-x: hidden;
 }
 
+/* The aurora. Screen blending over near-black means overlapping blobs add
+   light instead of muddying, which is what keeps the palette vivid on a dark
+   ground. Colour is weighted to the edges so the middle band stays dark enough
+   to read type against. Oversized and slowly drifting, so the blobs never
+   settle into shapes you can read as fixed. */
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  inset: -30%;
   pointer-events: none;
   z-index: 0;
-  background:
-    radial-gradient(54% 34% at 50% -12%, rgba(245,245,247,0.16), transparent 62%),
-    radial-gradient(44% 34% at 50% 28%, rgba(215,199,161,0.08), transparent 70%);
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(30% 26% at 12% 8%,  rgba(59, 111, 208, 0.72), transparent 64%),
+    radial-gradient(26% 22% at 68% 4%,  rgba(242, 165, 92, 0.62), transparent 64%),
+    radial-gradient(20% 18% at 90% 18%, rgba(199, 219, 74, 0.48), transparent 64%),
+    radial-gradient(20% 18% at 98% 40%, rgba(239, 124, 96, 0.55), transparent 66%),
+    radial-gradient(26% 24% at 82% 68%, rgba(244, 176, 152, 0.42), transparent 68%),
+    radial-gradient(32% 28% at 44% 94%, rgba(74, 124, 210, 0.68), transparent 66%),
+    radial-gradient(26% 24% at 10% 74%, rgba(228, 162, 206, 0.50), transparent 68%),
+    radial-gradient(22% 24% at 2% 42%,  rgba(139, 122, 216, 0.50), transparent 64%),
+    radial-gradient(24% 22% at 92% 92%, rgba(243, 170, 120, 0.42), transparent 68%);
+  background-blend-mode: screen;
+  animation: aurora-drift 68s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1.02); }
+  to   { transform: translate3d(1.5%, 1.5%, 0) scale(1.08); }
+}
+
+/* Film grain over the aurora but under the content (which sits at z-index 2),
+   so the colour field stays dusty while type stays crisp.
+
+   A baked tile rather than an inline feTurbulence SVG. The filter was
+   rasterised by the browser, so how much light it added shifted between loads
+   and between display scales — the page came up grey on some reloads and black
+   on others. It also produced a solid mid-grey plane, so its opacity lifted
+   every black on the page. The tile carries its noise in the alpha channel
+   over white, which leaves black at black and only brightens the speckles. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("assets/grain.png?v=1");
+  background-size: 160px 160px;
+}
+
+::selection {
+  background: rgba(122, 166, 232, 0.32);
+  color: #f5f5f7;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -247,6 +297,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .js .hero-title { animation: none; }
+  body::before { animation: none; }
 }
 
 .hero-title em {
@@ -292,17 +343,27 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  border-block: 1px solid var(--line);
+  /* Three across, two down. The descriptions carry real detail about what the
+     app does — this is the only section that explains it — and five narrow
+     columns left them too cramped to read. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Smoked glass rather than a bare row between hairlines: against the aurora
+     the strip needs a surface of its own to sit on. */
+  border: 1px solid var(--glass-edge);
+  border-radius: 22px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--lift);
+  overflow: hidden;
 }
 .feature-strip li {
   min-width: 0;
-  padding: 18px 18px 18px 0;
-}
-.feature-strip li + li {
-  padding-left: 18px;
+  padding: 20px 22px;
   border-left: 1px solid var(--line);
 }
+.feature-strip li:nth-child(3n + 1) { border-left: 0; }
+.feature-strip li:nth-child(n + 4) { border-top: 1px solid var(--line); }
 .feature-strip strong {
   display: block;
   color: var(--paper);
@@ -319,12 +380,22 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   line-height: 1.35;
 }
 
+/* Each breakpoint has to re-derive its own dividers: "starts a row" is a
+   different set of cells at three columns than at two or one, so the 3n rules
+   above are reset rather than inherited. */
 @media (max-width: 820px) {
   .feature-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .feature-strip li { border-bottom: 1px solid var(--line); }
-  .feature-strip li + li { border-left: 0; }
-  .feature-strip li:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--line); }
-  .feature-strip li:nth-last-child(-n + 1) { border-bottom: 0; }
+  .feature-strip li,
+  .feature-strip li:nth-child(3n + 1) { border-left: 1px solid var(--line); border-top: 0; }
+  .feature-strip li:nth-child(odd) { border-left: 0; }
+  .feature-strip li:nth-child(n + 3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 520px) {
+  .feature-strip { grid-template-columns: minmax(0, 1fr); }
+  .feature-strip li,
+  .feature-strip li:nth-child(3n + 1),
+  .feature-strip li:nth-child(odd) { border-left: 0; }
+  .feature-strip li:nth-child(n + 2) { border-top: 1px solid var(--line); }
 }
 
 .steps {
@@ -417,64 +488,30 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 
 /* ════════════════════════════ ACCESS ══════════════════════ */
+/* No glow, vignette or line art behind this section any more: all three
+   existed to give a flat black page some depth, and the aurora already does
+   that. Stacked on top of it they read as clutter — and the curves ran
+   straight through the buttons. The min-height went with them; it was
+   reserving room for artwork that is no longer drawn, which left a screen of
+   dead space around the CTA. */
 .access {
-  isolation: isolate;
   text-align: center;
-  overflow: hidden;
-  min-height: clamp(500px, 54vw, 640px);
+  min-height: 0;
   display: grid;
   place-items: center;
 }
-.access::before {
-  content: "";
-  position: absolute;
-  inset: -18% -8%;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(44% 46% at 50% 43%, rgba(245,245,247,0.16), transparent 60%),
-    radial-gradient(42% 44% at 50% 38%, rgba(215,199,161,0.20), transparent 68%),
-    radial-gradient(28% 30% at 50% 58%, rgba(236,154,118,0.08), transparent 70%);
-  filter: blur(0.2px);
-}
-.access::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, #000 0%, rgba(0,0,0,0.72) 12%, transparent 28%, transparent 72%, rgba(0,0,0,0.72) 88%, #000 100%),
-    linear-gradient(180deg, #000 0%, rgba(0,0,0,0.4) 18%, transparent 34%, transparent 64%, rgba(0,0,0,0.56) 82%, #000 100%);
-}
-.access-art {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(1550px, 112vw);
-  height: min(360px, 42vw);
-  min-height: 210px;
-  transform: translate(-50%, -42%);
-  z-index: -1;
-  opacity: 1;
-  overflow: visible;
-  filter: drop-shadow(0 0 18px rgba(215,199,161,0.24));
-}
-.access-art-shadow {
-  stroke: rgba(245,245,247,0.24);
-  stroke-width: 3.5;
-  stroke-linecap: round;
-}
-.access-art-gold {
-  stroke: #d7c7a1;
-  stroke-width: 4;
-  stroke-linecap: round;
-}
+/* The copy block becomes the surface instead, matching the feature strip. */
 .access-copy {
   position: relative;
   max-width: 820px;
   margin: 0 auto;
-  padding: clamp(38px, 6vw, 64px) clamp(20px, 4vw, 44px);
+  padding: clamp(38px, 6vw, 64px) clamp(24px, 4vw, 48px);
+  border: 1px solid var(--glass-edge);
+  border-radius: 28px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--lift);
 }
 .access-title {
   font-family: var(--display);
@@ -484,9 +521,6 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   letter-spacing: -0.035em;
   margin: 0 0 24px;
   white-space: nowrap;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,0.08),
-    0 26px 70px rgba(0,0,0,0.72);
 }
 .access-logo { display: flex; justify-content: center; margin-bottom: 26px; color: var(--paper); }
 .access-logo svg {
@@ -507,7 +541,6 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   line-height: 1.35;
   max-width: 48ch;
   margin: 0 auto 38px;
-  text-shadow: 0 18px 44px rgba(0,0,0,0.8);
 }
 .access-fineprint {
   color: rgba(245,245,247,0.6);
@@ -543,26 +576,10 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 
 @media (max-width: 680px) {
   .access {
-    min-height: 520px;
     padding-top: 58px;
     padding-bottom: 58px;
   }
-  .access::before {
-    inset: -12% -24%;
-  }
-  .access::after {
-    background:
-      linear-gradient(90deg, #000 0%, rgba(0,0,0,0.58) 9%, transparent 24%, transparent 76%, rgba(0,0,0,0.58) 91%, #000 100%),
-      linear-gradient(180deg, #000 0%, rgba(0,0,0,0.36) 18%, transparent 34%, transparent 64%, rgba(0,0,0,0.58) 82%, #000 100%);
-  }
-  .access-art {
-    width: 128vw;
-    height: 300px;
-    transform: translate(-50%, -34%);
-  }
-  .access-art-shadow { stroke-width: 3; }
-  .access-art-gold { stroke-width: 3.4; }
-  .access-copy { padding-inline: 20px; }
+  .access-copy { padding-inline: 22px; }
   .access-title {
     font-size: clamp(34px, 9.5vw, 48px);
     white-space: normal;
@@ -606,13 +623,35 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   transform: translateX(-50%);
   border-radius: 24px;
   border: 1px solid rgba(245,245,247,0.10);
+  /* No bezel along the top: `.notch` is positioned against the padding box, so
+     a top border draws a hairline straight across it and separates it from the
+     screen edge. On a real Mac the notch reaches that edge. Dropping the top
+     border makes the padding box start at the outer edge, so it does here too. */
+  border-top: 0;
   overflow: hidden;
+  /* Desktop wallpaper — a dusk gradient, lit from the top centre.
+     That placement is the whole point: the notch and its expanded panel are
+     near-black, and the previous wallpaper was darkest exactly where they sit,
+     so the one thing this demo exists to show had no silhouette. Light pools
+     behind the notch instead, then falls off to cool slate at the edges and
+     near-black along the bottom, which keeps the dock and the desktop windows
+     reading as objects on top of a surface rather than shapes in fog. Warm
+     centre, so it still sits with the beige the rest of the site uses. */
   background:
-    radial-gradient(72% 56% at 18% 4%, rgba(207, 95, 72, 0.22), transparent 60%),
-    radial-gradient(70% 62% at 88% 28%, rgba(214, 126, 68, 0.20), transparent 61%),
-    radial-gradient(78% 70% at 56% 118%, rgba(105, 143, 108, 0.22), transparent 63%),
-    radial-gradient(66% 58% at 7% 94%, rgba(143, 151, 143, 0.18), transparent 60%),
-    linear-gradient(162deg, #2b2927 0%, #242627 48%, #191d1a 100%);
+    radial-gradient(44% 32% at 50% -8%, rgba(255, 233, 202, 0.52), transparent 64%),
+    radial-gradient(66% 44% at 50% 1%, rgba(230, 160, 112, 0.34), transparent 66%),
+    radial-gradient(70% 54% at 8% 18%, rgba(96, 92, 150, 0.30), transparent 66%),
+    radial-gradient(68% 52% at 95% 24%, rgba(70, 116, 150, 0.28), transparent 66%),
+    radial-gradient(86% 64% at 50% 114%, rgba(8, 10, 16, 0.94), transparent 64%),
+    linear-gradient(176deg, #35302f 0%, #2a2a33 32%, #1d222c 60%, #12151c 80%, #0a0c11 100%);
+  /* Gradients are positioned against the padding box by default but painted
+     out to the border box, so the 1px semi-transparent border showed a
+     *wrapped* copy of the gradient's opposite edge. With a top-lit wallpaper
+     that put a bright warm hairline along the bottom edge, under the dock.
+     Anchoring the gradient to the border box makes it continuous instead.
+     Must stay after the `background` shorthand, which resets both. */
+  background-origin: border-box;
+  background-repeat: no-repeat;
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.55),
     inset 0 1px 0 rgba(255,255,255,0.06),
@@ -916,7 +955,7 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   width: 180px;
   height: 30px;
 }
-.notch.is-media-playing:not(.is-open):not(:hover) {
+.notch.is-media-peek:not(.is-open):not(:hover) {
   width: 248px;
 }
 .notch.is-open, .notch:hover {
@@ -953,10 +992,10 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   pointer-events: none;
   transition: opacity 0.18s ease;
 }
-.notch.is-media-playing:not(.is-open):not(:hover) .notch-media-pill {
+.notch.is-media-peek:not(.is-open):not(:hover) .notch-media-pill {
   opacity: 1;
 }
-.notch.is-media-playing:not(.is-open):not(:hover) .notch-idle {
+.notch.is-media-peek:not(.is-open):not(:hover) .notch-idle {
   opacity: 0;
 }
 .media-art {
@@ -1330,10 +1369,10 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   .np-rail-preview {
     display: none !important;
   }
-  .notch.is-media-playing:not(.is-open):not(:hover) {
+  .notch.is-media-peek:not(.is-open):not(:hover) {
     width: 180px;
   }
-  .notch.is-media-playing:not(.is-open):not(:hover) .notch-idle {
+  .notch.is-media-peek:not(.is-open):not(:hover) .notch-idle {
     opacity: 1;
   }
   .notch.is-open, .notch:hover, .notch:focus-visible, .notch:focus-within {

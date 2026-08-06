@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Render assets/og.png — the link-preview card for pixelpane.app.
 
-Mirrors the hero: crescent mark, wordmark, tagline, mono footer. Output is
+Mirrors the hero: the app-icon mark, wordmark, tagline, mono footer. Output is
 2400x1260 (2x the 1200x630 the meta tags declare). Needs Pillow and macOS
 for SF Pro; JetBrains Mono is fetched from Google Fonts and cached alongside.
 
-    python3 tools/make-og.py
+    python3 tools/make-icons.py && python3 tools/make-og.py
 
 After regenerating, bump the ?v= on og:image and twitter:image in index.html —
 Slack, iMessage, and X cache the old artwork against the old URL.
@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 W, H, SS = 2400, 1260, 2          # supersample factor for crisp vector shapes
 INK = (0, 0, 0)
 PAPER = (245, 245, 247)
-BEIGE = (201, 184, 150)           # logo-mark.svg fill
+BEIGE = (201, 184, 150)           # warm accent, still used by the tagline
 MUTED = (245, 245, 247, 168)      # --muted, 0.66
 FAINT = (245, 245, 247, 97)       # --faint, 0.38
 
@@ -102,16 +102,15 @@ def build():
     for x in (gutter, w - gutter):
         d.rectangle([x, 0, x + SS, h], fill=(245, 245, 247, 13))
 
-    # crescent mark — circle minus an offset circle (logo-mark.svg)
-    mark = Image.new("L", (w, h), 0)
-    md = ImageDraw.Draw(mark)
-    r = int(0.0405 * w)
-    mcx, mcy = w / 2, int(0.245 * h)
-    md.ellipse([mcx - r, mcy - r, mcx + r, mcy + r], fill=255)
-    r2 = int(r * 0.892)
-    off = int(r * 0.60)
-    md.ellipse([mcx - r2 - off, mcy - r2, mcx + r2 - off, mcy + r2], fill=0)
-    img.paste(Image.new("RGB", (w, h), BEIGE), (0, 0), mark)
+    # The mark, taken straight from assets/app-icon.png rather than redrawn
+    # here — one renderer for the icon means the link preview cannot drift away
+    # from what ships as the favicon and touch icon.
+    icon_path = os.path.join(ROOT, "assets", "app-icon.png")
+    if not os.path.exists(icon_path):
+        sys.exit("missing %s — run tools/make-icons.py first" % icon_path)
+    side = int(0.115 * w)
+    icon = Image.open(icon_path).convert("RGBA").resize((side, side), Image.LANCZOS)
+    img.paste(icon, (int(w / 2 - side / 2), int(0.245 * h - side / 2)), icon)
 
     # wordmark
     tsize = int(0.088 * w)

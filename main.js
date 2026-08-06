@@ -96,6 +96,7 @@
   var previewHideTimer = null;
   var activeRailIndex = 0;
   var mediaPlaying = false;
+  var mediaPeekTimer = null;
 
   var chatPreviews = [
     { title: "Update the landing demo", subtitle: "On screen", lines: [["You", "make the notch demo match the new app"], ["Pixel Pane", "I found the panel changes and mapped them into the site demo."]] },
@@ -317,6 +318,20 @@
     }
   }
 
+  // The real notch flashes the now-playing pill on a transport change and then
+  // gets out of the way. Holding it out for as long as the track played buried
+  // the idle notch, which is the state the demo exists to show. Kept separate
+  // from `is-media-playing` on purpose: the wave animation and the expanded
+  // panel's media strip still follow whether audio is actually playing.
+  function peekMedia() {
+    if (mediaPeekTimer) clearTimeout(mediaPeekTimer);
+    notch.classList.add("is-media-peek");
+    mediaPeekTimer = setTimeout(function () {
+      mediaPeekTimer = null;
+      notch.classList.remove("is-media-peek");
+    }, 1800);
+  }
+
   // ── the chat ───────────────────────────────────────────────────────────────
   function metaLabel() {
     if (mode === "Cloud") return "Cloud";
@@ -495,6 +510,7 @@
       e.stopPropagation();
       cancelIntro();
       setMediaPlaying(!mediaPlaying);
+      peekMedia();
     });
   }
   panel.querySelectorAll(".np-rail-dot").forEach(function (dot, index) {

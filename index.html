@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pixel Pane — A command center in your Mac notch</title>
+  <title>Pixel Pane</title>
   <meta name="description" content="Pixel Pane puts chat, terminal, files, models, sessions, and media in one Mac-native notch surface. Local by default, cloud by choice, and only active when you ask." />
 
   <meta property="og:title" content="Pixel Pane" />
   <meta property="og:description" content="An AI command bar for your Mac notch." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://pixelpane.app/" />
-  <meta property="og:image" content="https://pixelpane.app/assets/og.png?v=3" />
+  <meta property="og:image" content="https://pixelpane.app/assets/og.png?v=6" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Pixel Pane" />
   <meta name="twitter:description" content="An AI command bar for your Mac notch." />
-  <meta name="twitter:image" content="https://pixelpane.app/assets/og.png?v=3" />
+  <meta name="twitter:image" content="https://pixelpane.app/assets/og.png?v=6" />
 
-  <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="assets/app-icon.png?v=4" />
+  <link rel="icon" href="assets/favicon.svg?v=7" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/app-icon.png?v=7" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="styles.css?v=36" />
   <!-- Set before first paint so the hero title starts hidden and animates in,
        rather than flashing at full opacity while main.js is still loading. -->
   <script>document.documentElement.classList.add("js");</script>
@@ -39,7 +39,9 @@
     <a class="wordmark" href="#top" aria-label="Pixel Pane home">
       <span class="wordmark-mark" aria-hidden="true">
         <svg viewBox="0 0 64 64" width="18" height="18" fill="none">
-          <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896" />
+          <defs><linearGradient id="pp-wm" x1="8%" y1="4%" x2="92%" y2="96%"><stop offset="0" stop-color="#4f8ce6"/><stop offset=".38" stop-color="#9182dd"/><stop offset=".68" stop-color="#f0a95e"/><stop offset="1" stop-color="#ef7a5c"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="30" fill="url(#pp-wm)" />
+          <circle cx="32" cy="32" r="13" fill="#141a33" />
         </svg>
       </span>
     </a>
@@ -307,11 +309,12 @@
     <!-- ─────────────────────── FEATURES ─────────────────────── -->
     <section class="features" id="how">
       <ul class="feature-strip" aria-label="Pixel Pane features">
-        <li><strong>Chat</strong><span>Ask from anywhere.</span></li>
-        <li><strong>Terminal</strong><span>Use a real shell.</span></li>
-        <li><strong>Files</strong><span>Grant sources explicitly.</span></li>
-        <li><strong>Models</strong><span>Local, Cloud, Custom.</span></li>
-        <li><strong>Media</strong><span>Now playing in the notch.</span></li>
+        <li><strong>Chat</strong><span>Multi-turn chat in the notch. Sessions keep their place as you switch between them.</span></li>
+        <li><strong>Terminal</strong><span>A real shell in the same panel, so you can run a command without switching windows.</span></li>
+        <li><strong>Files</strong><span>Reads only the folders you grant it, and every edit is staged for your approval first.</span></li>
+        <li><strong>Models</strong><span>On-device by default. Bring your own OpenRouter account or API key when you want more.</span></li>
+        <li><strong>Media</strong><span>Now playing and playback controls, right in the notch.</span></li>
+        <li><strong>Private</strong><span>Text only — no screen recording, and on Local nothing ever leaves your Mac.</span></li>
       </ul>
     </section>
 
@@ -319,14 +322,12 @@
 
     <!-- ─────────────────────── ACCESS / CTA ─────────────────────── -->
     <section class="access" id="download">
-      <svg class="access-art line-art" viewBox="0 0 1200 320" fill="none" aria-hidden="true" preserveAspectRatio="none">
-        <path class="draw access-art-shadow" pathLength="1" d="M-80 194 C160 38 390 42 594 162 C778 270 1010 254 1280 34" />
-        <path class="draw access-art-gold" pathLength="1" d="M-80 266 C174 74 432 96 612 206 C806 326 1010 302 1280 88" />
-      </svg>
       <div class="access-copy">
         <div class="access-logo" aria-hidden="true">
           <svg viewBox="0 0 64 64" fill="none">
-            <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896" />
+            <defs><linearGradient id="pp-ac" x1="8%" y1="4%" x2="92%" y2="96%"><stop offset="0" stop-color="#4f8ce6"/><stop offset=".38" stop-color="#9182dd"/><stop offset=".68" stop-color="#f0a95e"/><stop offset="1" stop-color="#ef7a5c"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="30" fill="url(#pp-ac)" />
+          <circle cx="32" cy="32" r="13" fill="#141a33" />
           </svg>
         </div>
         <p class="eyebrow">Download</p>
@@ -353,7 +354,9 @@
     <div class="footer-inner">
       <span class="footer-mark">
         <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896" />
+          <defs><linearGradient id="pp-ft" x1="8%" y1="4%" x2="92%" y2="96%"><stop offset="0" stop-color="#4f8ce6"/><stop offset=".38" stop-color="#9182dd"/><stop offset=".68" stop-color="#f0a95e"/><stop offset="1" stop-color="#ef7a5c"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="30" fill="url(#pp-ft)" />
+          <circle cx="32" cy="32" r="13" fill="#141a33" />
         </svg>
         Pixel Pane
       </span>
@@ -362,6 +365,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=11"></script>
+  <script src="main.js?v=12"></script>
 </body>
 </html>

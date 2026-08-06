@@ -1,4 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- crescent: outer disc arc, returning along the terminator -->
-  <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pixel Pane">
+  <!-- Same mark as app-icon.svg with a larger orb: at 16px the field is only
+       a few pixels wide, so the orb has to claim more of the tile to register
+       at all. The grain filter is dropped too — feTurbulence resolves to
+       nothing at tab size and costs a filter pass on every paint. -->
+  <defs>
+    <clipPath id="pp-fav-clip"><rect width="64" height="64" rx="14"/></clipPath>
+    <radialGradient id="pp-fa1" cx="14%" cy="16%" r="62%">
+      <stop offset="0" stop-color="#4f8ce6" stop-opacity="1"/><stop offset="1" stop-color="#4f8ce6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa2" cx="72%" cy="6%" r="58%">
+      <stop offset="0" stop-color="#f0a95e" stop-opacity="1"/><stop offset="1" stop-color="#f0a95e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa3" cx="86%" cy="30%" r="40%">
+      <stop offset="0" stop-color="#c6dc55" stop-opacity=".92"/><stop offset="1" stop-color="#c6dc55" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa4" cx="97%" cy="52%" r="42%">
+      <stop offset="0" stop-color="#ef7a5c" stop-opacity=".95"/><stop offset="1" stop-color="#ef7a5c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa5" cx="44%" cy="98%" r="62%">
+      <stop offset="0" stop-color="#4a86e0" stop-opacity="1"/><stop offset="1" stop-color="#4a86e0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa6" cx="8%" cy="74%" r="50%">
+      <stop offset="0" stop-color="#e79ed0" stop-opacity=".95"/><stop offset="1" stop-color="#e79ed0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa7" cx="4%" cy="46%" r="42%">
+      <stop offset="0" stop-color="#9182dd" stop-opacity=".92"/><stop offset="1" stop-color="#9182dd" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-fa8" cx="90%" cy="90%" r="46%">
+      <stop offset="0" stop-color="#f2ad7e" stop-opacity=".88"/><stop offset="1" stop-color="#f2ad7e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-forb" cx="50%" cy="45%" r="64%">
+      <stop offset="0" stop-color="#2a3768"/>
+      <stop offset="0.5" stop-color="#1a2245"/>
+      <stop offset="1" stop-color="#0b0e1d"/>
+    </radialGradient>
+    <filter id="pp-forb-shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+  </defs>
+  <g clip-path="url(#pp-fav-clip)">
+    <rect width="64" height="64" fill="#171a2e"/>
+    <rect width="64" height="64" fill="url(#pp-fa1)"/>
+    <rect width="64" height="64" fill="url(#pp-fa2)"/>
+    <rect width="64" height="64" fill="url(#pp-fa3)"/>
+    <rect width="64" height="64" fill="url(#pp-fa4)"/>
+    <rect width="64" height="64" fill="url(#pp-fa5)"/>
+    <rect width="64" height="64" fill="url(#pp-fa6)"/>
+    <rect width="64" height="64" fill="url(#pp-fa7)"/>
+    <rect width="64" height="64" fill="url(#pp-fa8)"/>
+    <circle cx="33" cy="33.4" r="15" fill="#05060d" opacity=".5" filter="url(#pp-forb-shadow)"/>
+    <circle cx="32" cy="32" r="15" fill="url(#pp-forb)"/>
+  </g>
 </svg>

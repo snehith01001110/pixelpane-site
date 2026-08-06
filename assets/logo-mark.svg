@@ -1,3 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Pixel Pane">
-  <path d="M23.29 9.32 A26 26 0 1 1 23.29 54.68 A23.2 23.2 0 0 0 23.29 9.32 Z" fill="#c9b896"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pixel Pane">
+  <!-- The mark without a square tile: the same field and orb, clipped to a
+       circle so it can sit on any surface without implying an app icon. -->
+  <defs>
+    <clipPath id="pp-lm-clip"><circle cx="32" cy="32" r="32"/></clipPath>
+    <radialGradient id="pp-lma1" cx="14%" cy="16%" r="62%">
+      <stop offset="0" stop-color="#4f8ce6" stop-opacity="1"/><stop offset="1" stop-color="#4f8ce6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma2" cx="72%" cy="6%" r="58%">
+      <stop offset="0" stop-color="#f0a95e" stop-opacity="1"/><stop offset="1" stop-color="#f0a95e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma3" cx="86%" cy="30%" r="40%">
+      <stop offset="0" stop-color="#c6dc55" stop-opacity=".92"/><stop offset="1" stop-color="#c6dc55" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma4" cx="97%" cy="52%" r="42%">
+      <stop offset="0" stop-color="#ef7a5c" stop-opacity=".95"/><stop offset="1" stop-color="#ef7a5c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma5" cx="44%" cy="98%" r="62%">
+      <stop offset="0" stop-color="#4a86e0" stop-opacity="1"/><stop offset="1" stop-color="#4a86e0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma6" cx="8%" cy="74%" r="50%">
+      <stop offset="0" stop-color="#e79ed0" stop-opacity=".95"/><stop offset="1" stop-color="#e79ed0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma7" cx="4%" cy="46%" r="42%">
+      <stop offset="0" stop-color="#9182dd" stop-opacity=".92"/><stop offset="1" stop-color="#9182dd" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lma8" cx="90%" cy="90%" r="46%">
+      <stop offset="0" stop-color="#f2ad7e" stop-opacity=".88"/><stop offset="1" stop-color="#f2ad7e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pp-lm-orb" cx="50%" cy="45%" r="64%">
+      <stop offset="0" stop-color="#2a3768"/>
+      <stop offset="0.5" stop-color="#1a2245"/>
+      <stop offset="1" stop-color="#0b0e1d"/>
+    </radialGradient>
+    <filter id="pp-lm-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <filter id="pp-lm-orb-shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+  </defs>
+  <g clip-path="url(#pp-lm-clip)">
+    <rect width="64" height="64" fill="#171a2e"/>
+    <rect width="64" height="64" fill="url(#pp-lma1)"/>
+    <rect width="64" height="64" fill="url(#pp-lma2)"/>
+    <rect width="64" height="64" fill="url(#pp-lma3)"/>
+    <rect width="64" height="64" fill="url(#pp-lma4)"/>
+    <rect width="64" height="64" fill="url(#pp-lma5)"/>
+    <rect width="64" height="64" fill="url(#pp-lma6)"/>
+    <rect width="64" height="64" fill="url(#pp-lma7)"/>
+    <rect width="64" height="64" fill="url(#pp-lma8)"/>
+    <rect width="64" height="64" filter="url(#pp-lm-grain)" opacity=".14"/>
+    <circle cx="33" cy="33.4" r="14" fill="#05060d" opacity=".5" filter="url(#pp-lm-orb-shadow)"/>
+    <circle cx="32" cy="32" r="14" fill="url(#pp-lm-orb)"/>
+  </g>
 </svg>
