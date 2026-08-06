@@ -89,16 +89,22 @@ body::before {
 }
 
 /* Film grain over the aurora but under the content (which sits at z-index 2),
-   so the colour field stays dusty while type stays crisp. */
+   so the colour field stays dusty while type stays crisp.
+
+   A baked tile rather than an inline feTurbulence SVG. The filter was
+   rasterised by the browser, so how much light it added shifted between loads
+   and between display scales — the page came up grey on some reloads and black
+   on others. It also produced a solid mid-grey plane, so its opacity lifted
+   every black on the page. The tile carries its noise in the alpha channel
+   over white, which leaves black at black and only brightens the speckles. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.28;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  background-image: url("assets/grain.png?v=1");
+  background-size: 160px 160px;
 }
 
 ::selection {
@@ -617,6 +623,11 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   transform: translateX(-50%);
   border-radius: 24px;
   border: 1px solid rgba(245,245,247,0.10);
+  /* No bezel along the top: `.notch` is positioned against the padding box, so
+     a top border draws a hairline straight across it and separates it from the
+     screen edge. On a real Mac the notch reaches that edge. Dropping the top
+     border makes the padding box start at the outer edge, so it does here too. */
+  border-top: 0;
   overflow: hidden;
   /* Desktop wallpaper — a dusk gradient, lit from the top centre.
      That placement is the whole point: the notch and its expanded panel are
