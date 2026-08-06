@@ -204,8 +204,8 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   text-decoration-thickness: 1px;
 }
 @media (max-width: 560px) {
-  .access-actions { flex-direction: column; align-items: stretch; }
-  .access-actions .btn { width: 100%; }
+  .access-actions, .hero-actions { flex-direction: column; align-items: stretch; }
+  .access-actions .btn, .hero-actions .btn { width: 100%; }
 }
 
 /* ════════════════════════════ HERO ════════════════════════ */
@@ -226,6 +226,29 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   letter-spacing: -0.035em;
   margin: 0 0 18px;
 }
+/* The title arrives the way the product does: a centred sliver the width of a
+   closed notch, springing open to full width on the same curve as `.notch` —
+   drawn out here so it reads as a deliberate reveal rather than a flicker.
+   Gated on `.js` so the no-JS fallback just renders the title. The insets stay
+   negative on the vertical axis — line-height is 0.98, so a 0 inset would
+   shave the tops and bottoms of the glyphs. */
+.js .hero-title {
+  animation: title-open 1.6s cubic-bezier(0.32, 1.28, 0.5, 1) 0.15s both;
+}
+@keyframes title-open {
+  from {
+    clip-path: inset(-30% 42% -30% 42% round 22px);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(-30% -2% -30% -2% round 0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .hero-title { animation: none; }
+}
+
 .hero-title em {
   font-style: normal;
   background: var(--grad-warm);
