@@ -1,0 +1,129 @@
+/* ============================================================
+   Pixel Pane — beta skin
+   Loaded after ../styles.css, which it overrides.
+
+   Art direction: the reference image inverted. Its grainy pastel
+   field becomes a luminous aurora over near-black, and its hard
+   white disc becomes a hard black one — an eclipse sitting in the
+   brightest part of the bloom. The site stays dark, so production's
+   light-on-dark type and buttons are left to show through; this
+   file supplies the atmosphere, not a new colour scheme for text.
+
+   SCOPE RULE: page chrome only. The notch demo (.stage and every
+   .np-* / .term-* / .dock / .menubar rule inside it) is deliberately
+   untouched so it renders identically to production. That is also
+   why nothing here redefines the shared :root variables — the demo's
+   internals read --paper, --beige, --muted and --faint, so changing
+   them there would leak straight into the demo. Beta values live in
+   their own --b-* namespace.
+   ============================================================ */
+
+.beta {
+  --b-void:      #07070a;   /* base the aurora is screened onto */
+  --b-glass:     rgba(255, 255, 255, 0.045);
+  --b-glass-edge:rgba(255, 255, 255, 0.10);
+  --b-lift:      0 34px 80px -50px rgba(0, 0, 0, 0.9);
+}
+
+/* ── canvas ─────────────────────────────────────────────────── */
+.beta body { background: var(--b-void); }
+
+.beta ::selection {
+  background: rgba(122, 166, 232, 0.32);
+  color: #f5f5f7;
+}
+
+/* The aurora. Screen blending over near-black means overlapping blobs
+   add light instead of muddying, which is what keeps the palette vivid
+   on a dark ground. Colour is weighted to the edges so the middle band
+   stays dark enough to read type against. */
+.beta body::before {
+  inset: -30%;
+  background-color: var(--b-void);
+  background-image:
+    radial-gradient(30% 26% at 12% 8%,  rgba(59, 111, 208, 0.72), transparent 64%),
+    radial-gradient(26% 22% at 68% 4%,  rgba(242, 165, 92, 0.62), transparent 64%),
+    radial-gradient(20% 18% at 90% 18%, rgba(199, 219, 74, 0.48), transparent 64%),
+    radial-gradient(20% 18% at 98% 40%, rgba(239, 124, 96, 0.55), transparent 66%),
+    radial-gradient(26% 24% at 82% 68%, rgba(244, 176, 152, 0.42), transparent 68%),
+    radial-gradient(32% 28% at 44% 94%, rgba(74, 124, 210, 0.68), transparent 66%),
+    radial-gradient(26% 24% at 10% 74%, rgba(228, 162, 206, 0.50), transparent 68%),
+    radial-gradient(22% 24% at 2% 42%,  rgba(139, 122, 216, 0.50), transparent 64%),
+    radial-gradient(24% 22% at 92% 92%, rgba(243, 170, 120, 0.42), transparent 68%);
+  background-blend-mode: screen;
+  animation: beta-drift 68s ease-in-out infinite alternate;
+}
+
+@keyframes beta-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1.02); }
+  to   { transform: translate3d(1.5%, 1.5%, 0) scale(1.08); }
+}
+
+/* Film grain over the aurora but under the content (which sits at
+   z-index 2), so the colour field stays dusty and type stays crisp. */
+.beta body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── hero ───────────────────────────────────────────────────── */
+/* No disc here: the title sits straight on the aurora like the rest of
+   the page. A dark circle needs a bloom behind it to make its edge
+   read, and that pairing put a grey halo around the title rather than
+   reading as one surface. */
+
+/* ── feature strip ──────────────────────────────────────────── */
+/* Production runs this as a bare row between two hairlines. Against an
+   aurora it needs a surface of its own, so it becomes smoked glass. */
+.beta .feature-strip {
+  border-block: 0;
+  border: 1px solid var(--b-glass-edge);
+  border-radius: 22px;
+  background: var(--b-glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--b-lift);
+  overflow: hidden;
+}
+
+/* ── access / CTA ───────────────────────────────────────────── */
+/* Production stacks four things behind this section: a warm glow, a
+   black vignette, and two sweeping line-art curves. All of it exists to
+   give a flat black page some depth. The aurora already provides that,
+   so stacking them reads as clutter — and the curves cut straight
+   through the buttons. The beta drops all of it and gives the copy a
+   surface of its own instead, matching the feature strip.
+
+   The min-height also goes: it was reserving room for artwork that is
+   no longer drawn, which left a screen of dead space around the CTA. */
+.beta .access {
+  min-height: 0;
+  overflow: visible;
+}
+.beta .access::before,
+.beta .access::after,
+.beta .access-art { display: none; }
+
+.beta .access-copy {
+  border: 1px solid var(--b-glass-edge);
+  border-radius: 28px;
+  background: var(--b-glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--b-lift);
+}
+
+/* Both shadows were doing the work the vignette used to need. */
+.beta .access-title,
+.beta .access-sub { text-shadow: none; }
+
+/* ── motion ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .beta body::before { animation: none; }
+}
