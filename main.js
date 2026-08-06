@@ -35,7 +35,7 @@
 })();
 
 /* Notch demo — a working miniature of Pixel Pane's v1.1 notch assistant.
-   The panel opens on hover (and on an idle loop for discovery), you can type
+   The panel opens on hover (and once by itself when the page loads), you can type
    and "send", switch mode/model, grant file sources, copy the chat, and start
    over. Replies are scripted locally — there's no network — but every control
    is live. */
@@ -90,9 +90,8 @@
   var streamTimer = null;
   var hovering = false;
   var isFocused = false;
-  var inView = true;
-  var loopEnabled = !reduce;
-  var loopTimer = null;
+  var introArmed = false;        // set once the initial paint is done
+  var introTimer = null;
   var collapseTimer = null;
   var previewHideTimer = null;
   var activeRailIndex = 0;
@@ -169,9 +168,9 @@
   function isTouch() {
     return window.matchMedia && window.matchMedia("(hover: none)").matches;
   }
-  function stopLoop() {
-    loopEnabled = false;
-    if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
+  function cancelIntro() {
+    introArmed = false;
+    if (introTimer) { clearTimeout(introTimer); introTimer = null; }
   }
   function scrollTranscript() {
     transcript.scrollTop = transcript.scrollHeight;
@@ -368,7 +367,7 @@
   function send() {
     var text = input.value.trim();
     if (!text || running) return;
-    stopLoop();
+    cancelIntro();
     var answerEl = addTurn(text);
     input.value = "";
     autoGrow();
@@ -463,7 +462,7 @@
     notch.classList.toggle("is-terminal", terminal);
     notch.classList.toggle("has-messages", !terminal && msgCount > 0);
     closeAllMenus();
-    stopLoop();
+    cancelIntro();
     if (shouldOpen) openPanel(!terminal);
     else layout();
     if (terminal && shouldOpen) focusTerminalSoon();
@@ -480,7 +479,7 @@
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
     else if (e.key === "Escape") { input.blur(); }
   });
-  input.addEventListener("focus", function () { isFocused = true; stopLoop(); openPanel(false); });
+  input.addEventListener("focus", function () { isFocused = true; cancelIntro(); openPanel(false); });
   input.addEventListener("blur", function () { isFocused = false; });
   sendBtn.addEventListener("click", function () { running ? cancelStream() : send(); });
   newBtn.addEventListener("click", newChat);
@@ -494,20 +493,20 @@
   if (musicPlay) {
     musicPlay.addEventListener("click", function (e) {
       e.stopPropagation();
-      stopLoop();
+      cancelIntro();
       setMediaPlaying(!mediaPlaying);
     });
   }
   panel.querySelectorAll(".np-rail-dot").forEach(function (dot, index) {
     dot.addEventListener("mouseenter", function () {
-      stopLoop();
+      cancelIntro();
       openPanel(false);
       showRailPreview(dot, index);
     });
     dot.addEventListener("mouseleave", hideRailPreviewSoon);
     dot.addEventListener("click", function (e) {
       e.stopPropagation();
-      stopLoop();
+      cancelIntro();
       openPanel(false);
       loadRailEntry(index);
       showRailPreview(dot, index);
@@ -550,7 +549,7 @@
   function openMenu(name) {
     closeAllMenus(name);
     var entry = menus[name];
-    stopLoop();
+    cancelIntro();
     positionMenu(entry);
     // reflow so the transition runs from the hidden state
     void entry.menu.offsetWidth;
@@ -703,6 +702,48 @@
   bindTerminalInput();
   setActiveRailDot(0);
   setMediaPlaying(false);
+
+  // ── landing demo ────────────────────────────────────────────────────────────
+  // The notch looks inert until you hover it, so on arrival it opens itself
+  // once and closes again — enough to show the interaction exists. Strictly one
+  // shot per page load: it never loops, and any real interaction cancels it.
+  // Armed here rather than beside the other state because the initial paint
+  // above runs cancelIntro() on its way through setSurface().
+  function playIntro() {
+    introTimer = setTimeout(function () {
+      introTimer = null;
+      if (!introArmed || pinned() || isFocused) return;
+      openPanel(false);
+      // The open transition runs 0.6s, so this holds the settled panel for
+      // roughly half a second before closing — a glimpse, not a dwell.
+      introTimer = setTimeout(function () {
+        introTimer = null;
+        introArmed = false;
+        if (!pinned() && !isFocused) collapse();
+      }, 1400);
+    }, 900);
+  }
+
+  if (!reduce) {
+    introArmed = true;
+    // Wait for the notch to be on screen, so a visitor who lands mid-page (or
+    // on a short viewport) still sees it rather than missing it above the fold.
+    if ("IntersectionObserver" in window) {
+      var introIo = new IntersectionObserver(function (entries) {
+        if (!entries.some(function (e) { return e.isIntersecting; })) return;
+        introIo.disconnect();
+        if (introArmed) playIntro();
+      }, { threshold: 0.5 });
+      introIo.observe(notch);
+    } else {
+      playIntro();
+    }
+  }
+
+  // A pointer or keystroke on the notch means the visitor is driving; the
+  // scripted open would only fight them.
+  notch.addEventListener("pointerenter", cancelIntro);
+  notch.addEventListener("pointerdown", cancelIntro);
 })();
 
 function escapeHtml(s) {
