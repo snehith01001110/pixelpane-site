@@ -359,6 +359,26 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
 
+/* The hardware constraints, riding directly under the hero's Buy button. Quiet
+   enough not to compete with the CTA, present enough that nobody reaches the
+   checkout without having read them. */
+.hero-fineprint {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: rgba(245,245,247,0.56);
+  max-width: 46ch;
+  margin: 20px auto 0;
+}
+.hero-fineprint a {
+  color: rgba(245,245,247,0.72);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.3s var(--ease);
+}
+.hero-fineprint a:hover { color: var(--paper); }
+
 
 /* ════════════════════════ HOW IT WORKS ════════════════════ */
 .section-head { max-width: 760px; margin-bottom: clamp(28px, 5vw, 56px); }
@@ -600,6 +620,55 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
 }
 .access-fineprint a:hover { color: var(--paper); }
 
+/* ── requirements ──────────────────────────────────────────────
+   Inside the purchase card, above the buttons. Left-aligned inside a
+   centred card on purpose: these are read as facts, and centred prose at
+   this length is hard to scan. Two columns so the block stays short enough
+   that it never pushes the CTA out of view on a laptop. */
+.requirements {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 34px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(10, 10, 12, 0.34);
+  overflow: hidden;
+}
+/* Dividers drawn as real borders on the cells, the same way .feature-strip
+   does it — a gap filled by the container's background would have shown
+   through the translucent cells and lifted them off the card. */
+.req {
+  min-width: 0;
+  padding: 16px 18px;
+  border-left: 1px solid var(--line);
+}
+.req:nth-child(odd) { border-left: 0; }
+.req:nth-child(n + 3) { border-top: 1px solid var(--line); }
+.req dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--beige);
+  margin-bottom: 7px;
+}
+.req dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+/* At one column "starts a row" is every cell, so the two-column rules above are
+   re-derived rather than inherited. */
+@media (max-width: 680px) {
+  .requirements { grid-template-columns: minmax(0, 1fr); }
+  .req,
+  .req:nth-child(odd) { border-left: 0; }
+  .req:nth-child(n + 2) { border-top: 1px solid var(--line); }
+}
+
 .access .btn--primary {
   background: linear-gradient(180deg, #ffffff, #e9e9ed);
   box-shadow:
@@ -651,6 +720,37 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   font-size: 11.5px;
   letter-spacing: 0.04em;
   color: var(--faint);
+}
+
+/* Two explicit rows — mark + legal nav on top, tagline + year beneath — rather
+   than four siblings left to flex-wrap, which put the break wherever the
+   viewport happened to run out. The legal links are the reason a paid product
+   has a footer at all, so they share the wordmark's line instead of being
+   appended to the tagline. */
+.footer-inner { flex-direction: column; align-items: stretch; gap: 14px; }
+.footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 22px;
+  flex-wrap: wrap;
+}
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.footer-nav a {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  transition: color 0.3s var(--ease);
+}
+.footer-nav a:hover { color: var(--paper); }
+@media (max-width: 620px) {
+  .footer-row { justify-content: flex-start; }
+  .footer-nav { gap: 18px; }
 }
 
 /* ════════════════════════════ DEMO ════════════════════════ */
@@ -1622,3 +1722,108 @@ button.btn.btn--lg { font-family: var(--mono); font-size: 14px; }
   .js .line-art.is-visible .blink { animation: none; }
   .btn:hover { transform: none; }
 }
+
+/* ════════════════════ LEGAL / PROSE PAGES ═════════════════
+   Terms, refunds, privacy. Same aurora, grain and frame as the landing
+   page; a single measured column of prose on a glass card, because these
+   are documents someone reads rather than scans. */
+.legal {
+  width: 100%;
+  max-width: 780px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-top: clamp(28px, 5vw, 52px);
+  padding-bottom: clamp(56px, 9vw, 104px);
+  position: relative;
+  z-index: 2;
+}
+.legal-card {
+  padding: clamp(30px, 5vw, 56px) clamp(24px, 4vw, 48px);
+  border: 1px solid var(--glass-edge);
+  border-radius: 28px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--lift);
+}
+.legal-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  margin: 0 0 26px;
+}
+.legal-lede {
+  font-size: clamp(17px, 2vw, 19px);
+  line-height: 1.5;
+  color: rgba(245,245,247,0.82);
+  margin: 0 0 34px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--line);
+}
+.legal-card h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(20px, 2.6vw, 25px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 38px 0 14px;
+}
+.legal-card h2:first-of-type { margin-top: 0; }
+.legal-card p,
+.legal-card li {
+  color: var(--muted);
+  font-size: 15.5px;
+  line-height: 1.62;
+}
+.legal-card p { margin: 0 0 16px; }
+.legal-card ul { margin: 0 0 16px; padding-left: 20px; }
+.legal-card li { margin-bottom: 9px; }
+.legal-card li::marker { color: var(--faint); }
+.legal-card strong { color: var(--paper); font-weight: 600; }
+.legal-card a {
+  color: var(--paper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line-strong);
+  transition: text-decoration-color 0.3s var(--ease);
+}
+.legal-card a:hover { text-decoration-color: var(--beige); }
+.legal-card code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--beige);
+  background: rgba(10, 10, 12, 0.5);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+  /* Paths like ~/.cache/huggingface must not push the card wider than the
+     viewport on a phone. */
+  overflow-wrap: anywhere;
+}
+
+/* A callout for the one paragraph on each page that answers the question
+   people actually arrived with. */
+.legal-note {
+  margin: 0 0 26px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--beige);
+  border-radius: 4px 16px 16px 4px;
+  background: rgba(10, 10, 12, 0.34);
+}
+.legal-note p:last-child { margin-bottom: 0; }
+
+.legal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 26px;
+  transition: color 0.3s var(--ease);
+}
+.legal-back:hover { color: var(--paper); }
