@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#15161c" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Send a private bug report to the Pixel Pane team. Nothing is submitted until you press Send." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; script-src 'self' https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; frame-src 'none'; worker-src 'none'; media-src 'none'; manifest-src 'none'" />
+  <title>Report a Problem — Pixel Pane</title>
+
+  <link rel="icon" href="assets/favicon.svg?v=7" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/app-icon.png?v=7" />
+  <link rel="stylesheet" href="styles.css?v=39" />
+
+  <script defer src="support-core.js?v=1"></script>
+  <script defer src="support-config.js?v=1"></script>
+  <script defer src="support.js?v=1"></script>
+</head>
+<body>
+  <div class="frame" aria-hidden="true">
+    <span class="frame-line frame-line--left"></span>
+    <span class="frame-line frame-line--right"></span>
+  </div>
+
+  <header class="site-header">
+    <a class="wordmark" href="index.html" aria-label="Pixel Pane home">
+      <span class="wordmark-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="18" height="18" fill="none">
+          <defs><linearGradient id="pp-wm" x1="8%" y1="4%" x2="92%" y2="96%"><stop offset="0" stop-color="#4f8ce6"/><stop offset=".38" stop-color="#9182dd"/><stop offset=".68" stop-color="#f0a95e"/><stop offset="1" stop-color="#ef7a5c"/></linearGradient></defs>
+          <circle cx="32" cy="32" r="30" fill="url(#pp-wm)" />
+          <circle cx="32" cy="32" r="13" fill="#141a33" />
+        </svg>
+      </span>
+    </a>
+  </header>
+
+  <main class="support-page">
+    <a class="legal-back" href="index.html">← Pixel Pane</a>
+
+    <article class="support-card">
+      <header class="support-intro">
+        <p class="eyebrow">Private support</p>
+        <h1>Report a problem</h1>
+        <p>
+          Tell us what went wrong. Nothing is sent until you press
+          <strong>Send private report</strong>, and reports are visible only to
+          the Pixel Pane team in Sentry.
+        </p>
+      </header>
+
+      <form id="supportForm" class="support-form">
+        <div class="support-field">
+          <label for="supportCategory">Category</label>
+          <select id="supportCategory" name="category" required>
+            <option value="" selected disabled>Choose one</option>
+            <option>Crash</option>
+            <option>Unexpected behavior</option>
+            <option>AI/provider issue</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="support-field">
+          <label for="supportHappened">What happened <span aria-hidden="true">*</span></label>
+          <textarea id="supportHappened" name="happened" rows="6" maxlength="4000" required
+            placeholder="Describe what you saw and what you were trying to do."></textarea>
+          <span class="support-hint">Required · up to 4,000 characters</span>
+        </div>
+
+        <div class="support-field">
+          <label for="supportReproduction">Reproduction steps</label>
+          <textarea id="supportReproduction" name="reproduction" rows="5" maxlength="4000"
+            placeholder="1. Open…&#10;2. Choose…&#10;3. The problem appears…"></textarea>
+        </div>
+
+        <div class="support-field">
+          <label for="supportExpected">Expected behavior</label>
+          <textarea id="supportExpected" name="expected" rows="4" maxlength="2000"
+            placeholder="What did you expect Pixel Pane to do?"></textarea>
+        </div>
+
+        <div class="support-field">
+          <label for="supportEmail">Email <span class="support-optional">optional</span></label>
+          <input id="supportEmail" name="email" type="email" inputmode="email"
+            autocomplete="email" maxlength="254" placeholder="you@example.com" />
+          <span class="support-hint">Only include this if you want a reply.</span>
+        </div>
+
+        <div class="support-honeypot" aria-hidden="true">
+          <label for="supportWebsite">Website</label>
+          <input id="supportWebsite" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <section id="supportDiagnostics" class="support-diagnostics" hidden>
+          <div class="support-diagnostics-heading">
+            <div>
+              <h2>Diagnostics from the app</h2>
+              <p>These safe fields are editable. They contain no chats, files, logs, paths, model names, or keys.</p>
+            </div>
+            <button id="removeDiagnostics" class="support-remove" type="button">Remove all</button>
+          </div>
+          <div id="supportDiagnosticsList" class="support-diagnostics-list"></div>
+        </section>
+
+        <div class="support-consent">
+          <p>
+            By sending, you submit only the fields shown above to Sentry for
+            private support. Read the <a href="privacy.html">Privacy Policy</a>.
+            You can also <a href="mailto:snehithn5@gmail.com">email support</a>.
+          </p>
+        </div>
+
+        <div class="support-actions">
+          <button id="supportSend" class="btn btn--primary support-submit" type="submit">
+            Send private report
+          </button>
+          <p id="supportStatus" class="support-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-row">
+        <span class="footer-mark">
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <defs><linearGradient id="pp-ft" x1="8%" y1="4%" x2="92%" y2="96%"><stop offset="0" stop-color="#4f8ce6"/><stop offset=".38" stop-color="#9182dd"/><stop offset=".68" stop-color="#f0a95e"/><stop offset="1" stop-color="#ef7a5c"/></linearGradient></defs>
+            <circle cx="32" cy="32" r="30" fill="url(#pp-ft)" />
+            <circle cx="32" cy="32" r="13" fill="#141a33" />
+          </svg>
+          Pixel Pane
+        </span>
+        <nav class="footer-nav" aria-label="Legal and support">
+          <a href="index.html#requirements">Requirements</a>
+          <a href="terms.html">Terms</a>
+          <a href="refunds.html">Refunds</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="support.html" aria-current="page">Support</a>
+        </nav>
+      </div>
+      <div class="footer-row">
+        <span class="footer-note">Mac command center in your notch · 14-day free trial</span>
+        <span class="footer-year">© 2026</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

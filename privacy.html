@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#15161c" />
   <meta name="color-scheme" content="dark" />
   <title>Privacy Policy — Pixel Pane</title>
-  <meta name="description" content="What Pixel Pane can access on your Mac, what leaves your computer, and the choices you control. No analytics, no servers, no accounts." />
+  <meta name="description" content="What Pixel Pane can access, its privacy-gated anonymous analytics and fatal crash reports, private support submissions, and the choices you control." />
   <meta name="robots" content="index, follow" />
 
   <link rel="icon" href="assets/favicon.svg?v=7" type="image/svg+xml" />
@@ -42,11 +42,13 @@
 
       <p class="legal-lede">
         Pixel Pane is a local-first assistant for your Mac. This policy describes
-        what the app can access, what (if anything) leaves your computer, and the
-        choices you control. The short version: <strong>your questions, files,
-        and answers never leave your Mac unless you connect your own AI
-        provider</strong>, and every such route is opt-in. Pixel Pane runs no
-        server of its own.
+        what the app can access, what leaves your computer, and the choices you
+        control. The short version: <strong>your questions, files, answers,
+        terminal content, and local paths are never included in analytics or
+        automatic crash reports</strong>. They leave your Mac only when you
+        connect your own AI provider or deliberately write something into a
+        support report. Pixel Pane operates no model proxy or account service
+        of its own.
       </p>
 
       <h2>What Pixel Pane can access on your Mac</h2>
@@ -92,10 +94,11 @@
         network requests for AI processing in Local Mode.
       </p>
       <p>
-        Two ordinary housekeeping connections still happen in any mode, and
-        neither carries your content: update checks and license checks, both
-        described below. Installing an on-device model is a download, so it needs
-        the network too.
+        Housekeeping connections can still happen in any mode: update and
+        license checks, plus the independently controlled anonymous analytics
+        and fatal-crash reporting described below. None carries your questions,
+        answers, or local content. Installing an on-device model is a download,
+        so it needs the network too.
       </p>
 
       <h2>OpenRouter (explicit opt-in)</h2>
@@ -143,6 +146,84 @@
         Even on a remote route, local tools stay local: file reads happen under
         the grants you gave, file writes and terminal commands still require your
         approval, and they execute only on your Mac.
+      </p>
+
+      <h2>Anonymous analytics and fatal crash reports</h2>
+      <p>
+        Before either service can start, Pixel Pane shows a one-time privacy
+        disclosure. The two Settings → Permissions controls are independent,
+        take effect immediately, and default on:
+      </p>
+      <ul>
+        <li>
+          <strong>Share anonymous usage analytics.</strong> Pixel Pane uses
+          <a href="https://telemetrydeck.com" rel="noopener">TelemetryDeck</a>
+          to count anonymous active installations, sessions, onboarding
+          completion, and coarse feature use. The only app-defined events are
+          onboarding completed, support report opened, and agent run
+          started/finished. Run properties are limited to route class
+          (<code>local</code>, <code>openrouter</code>, or <code>custom</code>),
+          run mode, and a coarse outcome such as completed, blocked, failed,
+          canceled, or interrupted. Pixel Pane supplies no email, account,
+          license, model, or custom user ID. TelemetryDeck creates its own
+          anonymous installation identifier and adds SDK, app version/build,
+          operating-system and device category, architecture,
+          language/locale/region, time-zone, display/orientation,
+          distribution/debug state, and session/retention metadata. These
+          categories are used only for aggregate product analytics.
+        </li>
+        <li>
+          <strong>Send automatic crash reports.</strong> Pixel Pane uses
+          <a href="https://sentry.io" rel="noopener">Sentry</a> only for fatal
+          app crashes. The report is reduced before transmission to crash type
+          and mechanism, sanitized symbol/stack addresses, timestamp, app
+          version/build, macOS version, CPU architecture, release, distribution,
+          and environment. Sentry's PII collection, user identity, breadcrumbs,
+          logs, network tracking, tracing, profiling, replay, screenshots, view
+          hierarchy, attachments, sessions/release health, hangs, metrics, and
+          nonfatal automatic events are disabled. The Sentry project is
+          configured to suppress stored IP addresses and apply server-side
+          scrubbing as a second layer.
+        </li>
+      </ul>
+      <p>
+        Neither service receives prompts, answers, chat transcripts,
+        screenshots, OCR, clipboard data, files or paths, terminal content,
+        tool input/output, provider URLs, model identifiers, API keys, error
+        messages, precise location, licenses, or Pixel Pane run/session UUIDs.
+        Network providers necessarily receive a connection from your IP address,
+        but Pixel Pane does not attach the address as an analytics or crash field
+        and Sentry is configured not to retain it.
+      </p>
+      <p>
+        Turning a control off stops new collection immediately; it cannot
+        retract data already received. Pixel Pane's TelemetryDeck plan exposes
+        up to three months of live analytics, while TelemetryDeck states that
+        older unloaded data can remain in vendor cold storage under its service
+        terms. Sentry crash and feedback events are configured for no more than
+        90 days. Earlier deletion may be requested through the contact below,
+        subject to the anonymous nature of analytics data and vendor deletion
+        capabilities.
+      </p>
+
+      <h2>Private support reports</h2>
+      <p>
+        The first-party form at <a href="support.html">pixelpane.app/support.html</a>
+        submits through a separate private Sentry Feedback project. Merely
+        opening the page sends no report. The page does not enable automatic
+        website error collection, replay, tracing, cookies, attachments, or user
+        context; transmission happens only after you press
+        <strong>Send private report</strong>.
+      </p>
+      <p>
+        The form sends the category and text you enter, plus an email only if
+        you choose to provide one. When opened from the app, it can prefill app
+        version/build, macOS version, CPU architecture, coarse route class, and
+        <code>source=app</code>. Those diagnostics are visible, editable, and
+        removable before submission. The app does not prefill screenshots,
+        attachments, chats, files, paths, logs, model identifiers, provider
+        details, keys, or licenses. If you put sensitive content into a text
+        field yourself, it becomes part of the report you chose to send.
       </p>
 
       <h2>Trial, purchase, and license checks</h2>
@@ -208,16 +289,19 @@
 
       <h2>What Pixel Pane does not do</h2>
       <ul>
-        <li>No analytics, tracking, or telemetry in the app.</li>
-        <li>No account with us; no anonymous device identifier; no profile of your usage.</li>
+        <li>No account with us and no identified-person analytics profile.</li>
+        <li>No advertising, cross-site tracking, or analytics on the website.</li>
         <li>No screen capture or screenshots at all.</li>
         <li>No background screen or file monitoring.</li>
-        <li>No servers of ours — there is nowhere for your data to be collected.</li>
+        <li>No Pixel Pane model proxy or content backend.</li>
         <li>
           No selling of data, advertising profiles, or use of your content to
           train models.
         </li>
-        <li>Your questions, files, and answers never leave your Mac in Local Mode.</li>
+        <li>
+          Your questions, files, answers, and terminal content never enter
+          analytics or automatic crash reports.
+        </li>
       </ul>
 
       <h2>Your controls</h2>
@@ -237,6 +321,14 @@
         </li>
         <li>Revoke Pixel Pane's key from your OpenRouter account at openrouter.ai.</li>
         <li>
+          Turn anonymous usage analytics or automatic fatal-crash reports off
+          independently at any time in Settings → Permissions.
+        </li>
+        <li>
+          Review, edit, remove, or simply do not send the diagnostics on a
+          support report.
+        </li>
+        <li>
           Remove your license in Settings → License, which releases this Mac's
           activation slot; manage or delete your customer data with Polar
           directly.
@@ -252,7 +344,8 @@
 
       <h2>Changes</h2>
       <p>
-        We will update this document when data practices change.
+        Last updated August 12, 2026. We will update this document when data
+        practices change.
       </p>
     </article>
   </main>
@@ -273,7 +366,7 @@
           <a href="terms.html">Terms</a>
           <a href="refunds.html">Refunds</a>
           <a href="privacy.html">Privacy</a>
-          <a href="mailto:snehithn5@gmail.com">Support</a>
+          <a href="support.html">Support</a>
         </nav>
       </div>
       <div class="footer-row">
